@@ -1,0 +1,45 @@
+﻿student_id,student_name,course_code,course_name,semester,credits,attendance,midterm,final
+SV020,Nguyễn Minh Anh,MH011,Lập trình Python,HK1_2026,3,5.50,5.50,5.50
+SV020,Nguyễn Minh Anh,MH012,Phân tích dữ liệu,HK1_2026,3,5.60,5.60,5.60
+SV020,Nguyễn Minh Anh,MH013,Toán rời rạc,HK1_2026,3,5.70,5.70,5.70
+SV020,Nguyễn Minh Anh,MH014,Kiến trúc máy tính,HK1_2026,3,5.80,5.80,5.80
+SV020,Nguyễn Minh Anh,MH015,Hệ điều hành,HK1_2026,3,5.90,5.90,5.90
+SV020,Nguyễn Minh Anh,MH016,Cơ sở dữ liệu nâng cao,HK1_2026,3,6.00,6.00,6.00
+SV020,Nguyễn Minh Anh,MH017,Thiết kế giao diện người dùng,HK1_2026,3,6.10,6.10,6.10
+SV020,Nguyễn Minh Anh,MH018,Lập trình Java,HK1_2026,3,6.20,6.20,6.20
+SV020,Nguyễn Minh Anh,MH019,Phát triển phần mềm Agile,HK1_2026,3,5.50,5.50,5.50
+SV020,Nguyễn Minh Anh,MH020,Mạng máy tính nâng cao,HK1_2026,3,5.60,5.60,5.60
+SV020,Nguyễn Minh Anh,MH021,Phân tích thiết kế hướng đối tượng,HK1_2026,3,5.70,5.70,5.70
+SV020,Nguyễn Minh Anh,MH022,Kiểm thử tự động,HK1_2026,3,5.80,5.80,5.80
+SV020,Nguyễn Minh Anh,MH023,An toàn thông tin,HK1_2026,3,5.90,5.90,5.90
+SV020,Nguyễn Minh Anh,MH024,Điện toán đám mây,HK1_2026,3,6.00,6.00,6.00
+SV020,Nguyễn Minh Anh,MH025,Phát triển ứng dụng Android,HK1_2026,3,6.10,6.10,6.10
+SV020,Nguyễn Minh Anh,MH026,Thiết kế cơ sở dữ liệu,HK1_2026,3,6.20,6.20,6.20
+SV020,Nguyễn Minh Anh,MH027,Trí tuệ nhân tạo,HK1_2026,3,5.50,5.50,5.50
+SV020,Nguyễn Minh Anh,MH028,Công nghệ Web,HK1_2026,3,5.60,5.60,5.60
+SV020,Nguyễn Minh Anh,MH029,Quản lý dự án phần mềm,HK1_2026,3,5.70,5.70,5.70
+SV020,Nguyễn Minh Anh,MH030,Thương mại điện tử,HK1_2026,3,5.80,5.80,5.80
+SV020,Nguyễn Minh Anh,MH031,Cấu trúc dữ liệu và giải thuật,HK1_2026,3,3.20,3.20,3.20
+SV020,Nguyễn Minh Anh,MH032,Lập trình hướng đối tượng,HK1_2026,3,3.60,3.60,3.60
+SV021,Trần Quốc Bảo,MH011,Lập trình Python,HK1_2026,3,5.70,5.70,5.70
+SV021,Trần Quốc Bảo,MH012,Phân tích dữ liệu,HK1_2026,3,5.80,5.80,5.80
+SV021,Trần Quốc Bảo,MH013,Toán rời rạc,HK1_2026,3,5.90,5.90,5.90
+SV021,Trần Quốc Bảo,MH014,Kiến trúc máy tính,HK1_2026,3,6.00,6.00,6.00
+SV021,Trần Quốc Bảo,MH015,Hệ điều hành,HK1_2026,3,6.10,6.10,6.10
+SV021,Trần Quốc Bảo,MH016,Cơ sở dữ liệu nâng cao,HK1_2026,3,6.20,6.20,6.20
+SV021,Trần Quốc Bảo,MH017,Thiết kế giao diện người dùng,HK1_2026,3,5.50,5.50,5.50
+SV021,Trần Quốc Bảo,MH018,Lập trình Java,HK1_2026,3,5.60,5.60,5.60
+SV021,Trần Quốc Bảo,MH019,Phát triển phần mềm Agile,HK1_2026,3,5.70,5.70,5.70
+SV021,Trần Quốc Bảo,MH020,Mạng máy tính nâng cao,HK1_2026,3,5.80,5.80,5.80
+SV021,Trần Quốc Bảo,MH021,Phân tích thiết kế hướng đối tượng,HK1_2026,3,5.90,5.90,5.90
+SV021,Trần Quốc Bảo,MH022,Kiểm thử tự động,HK1_2026,3,6.00,6.00,6.00
+SV021,Trần Quốc Bảo,MH023,An toàn thông tin,HK1_2026,3,6.10,6.10,6.10
+SV021,Trần Quốc Bảo,MH024,Điện toán đám mây,HK1_2026,3,6.20,6.20,6.20
+SV021,Trần Quốc Bảo,MH025,Phát triển ứng dụng Android,HK1_2026,3,5.50,5.50,5.50
+SV021,Trần Quốc Bảo,MH026,Thiết kế cơ sở dữ liệu,HK1_2026,3,5.60,5.60,5.60
+SV021,Trần Quốc Bảo,MH027,Trí tuệ nhân tạo,HK1_2026,3,5.70,5.70,5.70
+SV021,Trần Quốc Bảo,MH028,Công nghệ Web,HK1_2026,3,5.80,5.80,5.80
+SV021,Trần Quốc Bảo,MH029,Quản lý dự án phần mềm,HK1_2026,3,5.90,5.90,5.90
+SV021,Trần Quốc Bảo,MH030,Thương mại điện tử,HK1_2026,3,6.00,6.00,6.00
+SV021,Trần Quốc Bảo,MH033,Kiểm thử phần mềm nâng cao,HK1_2026,3,3.40,3.40,3.40
+SV021,Trần Quốc Bảo,MH034,Phân tích và thiết kế hệ thống,HK1_2026,3,3.00,3.00,3.00

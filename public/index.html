@@ -1,0 +1,2973 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduAdvisor - Hệ Thống Hỗ Trợ Cố Vấn Học Tập</title>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-hover: #1e3a8a;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
+      --surface: #f8fafc;
+      --surface-card: #ffffff;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --warning: #d97706;
+      --warning-light: #fffbeb;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --radius: 12px;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--surface);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Layout Structure */
+    #sidebar {
+      width: 260px;
+      background: var(--surface-card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      z-index: 20;
+    }
+
+    #main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      height: 68px;
+      background: var(--surface-card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 28px;
+    }
+
+    /* Brand Logo */
+    .brand-box {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      color: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(30, 64, 175, 0.25);
+    }
+
+    /* Advisor Profile Card in Sidebar */
+    .advisor-badge {
+      margin: 14px 14px 10px 14px;
+padding: 12px;
+      background: #f1f5f9;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .advisor-avatar {
+      width: 38px;
+      height: 38px;
+      background: #e0e7ff;
+      color: var(--primary);
+      border-radius: 50%;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    /* Navigation */
+    .nav-list {
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .nav-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 14px;
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      color: #475569;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .nav-btn-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-btn:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+    .nav-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+    .nav-badge-count {
+      background: var(--danger);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 12px;
+    }
+
+    /* KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .kpi-card:hover, .kpi-card:focus-visible {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, .10);
+      border-color: var(--primary);
+      outline: none;
+    }
+    .kpi-card::after {
+      content: "Bấm để xem chi tiết →";
+      display: block;
+      margin-top: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .kpi-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .kpi-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+    .kpi-icon-wrap {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .kpi-sub {
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 6px;
+      color: var(--text-muted);
+    }
+
+    /* Views Common */
+    .view-container {
+      display: none;
+    }
+    .view-container.active-view {
+      display: block;
+      animation: fadeIn 0.25s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+    .card-header {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .card-body {
+      padding: 22px;
+    }
+
+    /* Chart row */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    /* Data Table */
+    .table-container {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13.5px;
+    }
+    th {
+      background: #f8fafc;
+      padding: 12px 18px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+    }
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .badge-critical {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+    .badge-warning {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+    .badge-success {
+      background: var(--success-light);
+      color: var(--success);
+    }
+    .badge-info {
+      background: #eff6ff;
+      color: var(--primary);
+    }
+
+    /* Buttons & Inputs */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+    .btn-outline {
+      background: white;
+      border-color: var(--border);
+      color: #334155;
+    }
+    .btn-outline:hover {
+      background: #f1f5f9;
+    }
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .search-input {
+      background: #f1f5f9;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 8px 14px 8px 36px;
+      font-size: 13.5px;
+      outline: none;
+      width: 260px;
+      transition: all 0.2s;
+    }
+    .search-input:focus {
+      background: white;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.15);
+    }
+
+    .form-select, .form-input, .form-textarea {
+width: 100%;
+      padding: 9px 12px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      color: var(--text-main);
+    }
+    .form-select:focus, .form-input:focus, .form-textarea:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-card {
+      background: white;
+      border-radius: 16px;
+      width: 600px;
+      max-width: 95vw;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      animation: modalScale 0.2s ease-out;
+    }
+    @keyframes modalScale {
+      from { transform: scale(0.96); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      box-shadow: var(--shadow-md);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 200;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+
+    /* Learning roadmap */
+    .roadmap-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .roadmap-select {
+      min-width: 260px;
+      max-width: 360px;
+    }
+    .roadmap-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .roadmap-stat {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .roadmap-stat-label {
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+    .roadmap-stat-value {
+      font-size: 25px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 8px;
+    }
+    .roadmap-progress-track {
+      height: 12px;
+      width: 100%;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .roadmap-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #1e40af, #60a5fa);
+      border-radius: 999px;
+      transition: width .3s ease;
+    }
+    .roadmap-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+    .roadmap-term-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .roadmap-term {
+      position: relative;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+    .roadmap-term:first-child {
+      border-left: 4px solid var(--primary);
+    }
+    .roadmap-term-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .roadmap-term-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .roadmap-term-meta {
+      color: var(--text-muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .roadmap-task {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      border-top: 1px solid #f1f5f9;
+      font-size: 12.5px;
+      color: #475569;
+      line-height: 1.55;
+    }
+    .roadmap-task i {
+      color: var(--primary);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .roadmap-side-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .roadmap-side-card h4 {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: #0f172a;
+    }
+    .roadmap-tip {
+      display: flex;
+      gap: 9px;
+      margin: 10px 0;
+      font-size: 12.5px;
+      color: #475569;
+      line-height: 1.55;
+    }
+    .roadmap-empty {
+      text-align: center;
+      padding: 34px 20px;
+      background: #fff;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      color: #64748b;
+    }
+    @media (max-width: 1100px) {
+      .roadmap-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .roadmap-layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .roadmap-summary-grid { grid-template-columns: 1fr 1fr; }
+      .roadmap-select { min-width: 100%; max-width: 100%; }
+      .roadmap-term-head { flex-direction: column; }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .chart-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      #sidebar { display: none; }
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Login and account security */
+    .auth-overlay { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 55%, #e0e7ff 100%); }
+    .auth-card { width: 100%; max-width: 420px; background: #fff; border: 1px solid #dbeafe; border-radius: 20px; padding: 30px; box-shadow: 0 24px 70px rgba(30,64,175,.15); }
+    .auth-logo { width: 54px; height: 54px; border-radius: 16px; background: #1e40af; color: white; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+    .auth-field { width: 100%; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px 13px; font: inherit; margin-top: 7px; margin-bottom: 14px; outline: none; }
+    .auth-field:focus { border-color: #2563eb; box-shadow: 0 0 0 3px #dbeafe; }
+    .auth-primary { width: 100%; border: 0; border-radius: 10px; padding: 12px; color: white; background: #1e40af; font-weight: 700; cursor: pointer; }
+    .auth-primary:hover { background: #1e3a8a; }
+    .auth-error { color: #b91c1c; font-size: 13px; margin: 0 0 12px; display: none; }
+    .account-actions { display:flex; gap:8px; padding: 0 14px 14px; }
+    .account-actions button { flex:1; border:1px solid var(--border); background:#fff; border-radius:8px; padding:8px 5px; font-size:12px; cursor:pointer; color:#334155; }
+    .account-actions button:hover { background:#eff6ff; border-color:#bfdbfe; }
+    #password-modal { display:none; position:fixed; inset:0; z-index:900; background:rgba(15,23,42,.48); align-items:center; justify-content:center; padding:20px; }
+    #password-modal.active { display:flex; }
+    .password-card { width:100%; max-width:440px; border-radius:16px; padding:24px; background:white; box-shadow:0 20px 60px rgba(0,0,0,.2); }
+    .password-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:8px; }
+    .password-actions button { border-radius:9px; padding:10px 14px; border:1px solid #cbd5e1; background:white; cursor:pointer; font-weight:600; }
+    .password-actions .save { background:#1e40af; color:white; border-color:#1e40af; }
+  /* Student Portal Entry */
+.student-entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 22px;
+    padding: 14px 15px;
+    border: 1px solid #bfdbfe;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #eff6ff 0%, #f8faff 100%);
+    color: #1e40af;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.student-entry:hover {
+    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+    border-color: #60a5fa;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.12);
+    transform: translateY(-2px);
+}
+
+.student-entry-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.student-entry-icon {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563eb;
+    background: #dbeafe;
+    border-radius: 11px;
+}
+
+.student-entry-text {
+    min-width: 0;
+}
+
+.student-entry-title {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    color: #1e40af;
+    margin-bottom: 4px;
+}
+
+.student-entry-description {
+    display: block;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #64748b;
+}
+
+.student-entry-arrow {
+    flex-shrink: 0;
+    color: #2563eb;
+    transition: transform 0.25s ease;
+}
+
+.student-entry:hover .student-entry-arrow {
+    transform: translateX(4px);
+}
+ </style>
+
+</head>
+<body>
+
+  <div id="login-screen" class="auth-overlay">
+    <form class="auth-card" onsubmit="handleLogin(event)">
+      <div class="auth-logo"><i data-lucide="graduation-cap" style="width:30px;height:30px"></i></div>
+      <h1 style="font-size:25px;font-weight:800;color:#0f172a;margin:0 0 6px">EduAdvisor</h1>
+      <p style="font-size:14px;color:#64748b;margin:0 0 24px">Đăng nhập dành cho Cố vấn học tập</p>
+      <label for="login-username" style="font-size:13px;font-weight:700;color:#334155">Tài khoản nhà trường cấp</label>
+      <input id="login-username" class="auth-field" autocomplete="username" required placeholder="Nhập tên đăng nhập">
+      <label for="login-password" style="font-size:13px;font-weight:700;color:#334155">Mật khẩu</label>
+      <input id="login-password" class="auth-field" type="password" autocomplete="current-password" required placeholder="Nhập mật khẩu">
+      <p id="login-error" class="auth-error">Tài khoản hoặc mật khẩu không chính xác.</p>
+      <button class="auth-primary" type="submit">Đăng nhập</button>
+      <a href="student-login.html">      
+      Bạn là sinh viên? Đăng nhập tại đây
+      </a>                               
+      <p style="font-size:11px;line-height:1.5;color:#94a3b8;margin:18px 0 0">Bản demo: dùng tài khoản minh họa trong README. Khi triển khai thật, tài khoản phải được xác thực qua máy chủ của nhà trường.</p>
+    </form>
+  </div>
+
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside id="sidebar">
+    <div class="brand-box">
+      <div class="brand-icon">
+        <i data-lucide="graduation-cap"></i>
+      </div>
+      <div>
+        <h1 style="font-size: 16px; font-weight: 800; color: #0f172a; line-height: 1.2;">EduAdvisor</h1>
+        <p style="font-size: 11px; font-weight: 600; color: #64748b; letter-spacing: 0.5px;">CỐ VẤN HỌC TẬP</p>
+      </div>
+    </div>
+
+    <div class="advisor-badge">
+      <div class="advisor-avatar">AN</div>
+      <div style="overflow: hidden;">
+        <p style="font-size: 13px; font-weight: 700; color: #0f172a; white-space: nowrap; text-overflow: ellipsis;">ThS. Nguyễn Văn Trung
+        <p style="font-size: 11px; color: #64748b;">Khoa CNTT & TT</p>
+      </div>
+    </div>
+
+    <div class="account-actions">
+      <button type="button" onclick="openPasswordModal()"><i data-lucide="key-round" style="width:13px;height:13px;vertical-align:middle"></i> Đổi mật khẩu</button>
+      <button type="button" onclick="logout()"><i data-lucide="log-out" style="width:13px;height:13px;vertical-align:middle"></i> Đăng xuất</button>
+    </div>
+
+    <div style="padding: 0 14px 10px 14px;">
+<div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; padding-left: 6px;">Lớp phụ trách</div>
+      <div style="background: #f8fafc; border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
+        <span>D21HTTT01 (48 SV)</span>
+        <span style="display: inline-block; width: 8px; height: 8px; background: #22c55e; border-radius: 50%;"></span>
+      </div>
+    </div>
+
+    <nav class="nav-list">
+      <button class="nav-btn active" onclick="switchTab('dashboard')">
+        <div class="nav-btn-left">
+          <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i>
+          <span>Tổng quan</span>
+        </div>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('students')">
+        <div class="nav-btn-left">
+          <i data-lucide="users" style="width: 18px; height: 18px;"></i>
+          <span>Danh sách sinh viên</span>
+        </div>
+      </button>
+
+      <button class="nav-btn" onclick="window.location.href='grades.html'">
+        <div class="nav-btn-left">
+          <i data-lucide="calculator" style="width: 18px; height: 18px;"></i>
+          <span>Nhập điểm & GPA</span>
+        </div>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('roadmap')">
+        <div class="nav-btn-left">
+          <i data-lucide="route" style="width: 18px; height: 18px;"></i>
+          <span>Lộ trình học tập</span>
+        </div>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('alerts')">
+        <div class="nav-btn-left">
+          <i data-lucide="alert-triangle" style="width: 18px; height: 18px;"></i>
+          <span>Cảnh báo học tập</span>
+        </div>
+        <span class="nav-badge-count" id="sidebar-alert-badge">3</span>
+      </button>
+
+      <button class="nav-btn" onclick="switchTab('detail')">
+        <div class="nav-btn-left">
+          <i data-lucide="user-check" style="width: 18px; height: 18px;"></i>
+          <span>Hồ sơ chi tiết SV</span>
+        </div>
+      </button>
+    </nav>
+
+    <div style="padding: 16px; border-top: 1px solid var(--border); font-size: 11px; color: #94a3b8; display: flex; justify-content: space-between; align-items: center;">
+      <span>Bản Demo JS Thuần v2.6 • Quản lý sinh viên</span>
+      <span style="color: #22c55e; font-weight: 700;">● Sẵn sàng</span>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <div id="main-content">
+    
+    <!-- HEADER -->
+    <header>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <span style="font-size: 12px; font-weight: 700; background: #eff6ff; color: var(--primary); padding: 5px 12px; border-radius: 6px; border: 1px solid var(--primary-border);">
+          Học kỳ 1 (2023 - 2024)
+        </span>
+        <span style="color: #cbd5e1;">|</span>
+        <span style="font-size: 13px; color: #475569;">
+          Khóa: <strong>K21 (2021 - 2025)</strong> • Ngành: <strong>Công nghệ phần mềm </strong>
+        </span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="position: relative;">
+          <i data-lucide="search" style="position: absolute; left: 12px; top: 9px; width: 16px; height: 16px; color: #94a3b8;"></i>
+          <input 
+            type="text"
+id="global-search-input" 
+            class="search-input" 
+            placeholder="Tìm MSSV hoặc họ tên..."
+            oninput="handleSearch(this.value)"
+          >
+        </div>
+
+        <button class="btn btn-outline" onclick="openAdvisingModal()" style="padding: 7px 12px;">
+          <i data-lucide="plus-circle" style="width: 16px; height: 16px; color: var(--primary);"></i>
+          <span>Thêm tư vấn</span>
+        </button>
+
+        <button class="btn btn-outline" onclick="exportDataExcel()" style="padding: 7px 12px;">
+          <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+          <span>Xuất CSV</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT BODY (ROUTER) -->
+    <main>
+      
+      <!-- ==================== VIEW 1: DASHBOARD ==================== -->
+      <div id="view-dashboard" class="view-container active-view">
+        
+        <!-- Welcome banner -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px;">
+          <div>
+            <h2 style="font-size: 22px; font-weight: 800; color: #0f172a;">Dashboard Quản Lý Lớp D21HTTT01</h2>
+            <p style="font-size: 13px; color: #64748b;">Theo dõi tiến độ tích lũy học phần, rà soát cảnh báo học vụ và phân tích phổ điểm</p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-primary" onclick="switchTab('alerts')">
+              <i data-lucide="alert-octagon" style="width: 16px; height: 16px;"></i>
+              <span id="dashboard-alert-action-label">Xử lý ca cảnh báo</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card" role="button" tabindex="0" aria-label="Xem danh sách sinh viên" onclick="openKpiDetail('students')" onkeydown="handleKpiKey(event, 'students')">
+            <div class="kpi-head">
+              <span class="kpi-label">Sĩ số lớp</span>
+              <div class="kpi-icon-wrap" style="background: #eff6ff; color: #2563eb;">
+                <i data-lucide="users" style="width: 20px; height: 20px;"></i>
+              </div>
+            </div>
+            <div class="kpi-value">48 <span style="font-size: 14px; font-weight: 500; color: #64748b;">sinh viên</span></div>
+            <div class="kpi-sub" style="color: #16a34a; font-weight: 600;">✓ 100% Đang theo học</div>
+          </div>
+
+          <div class="kpi-card" role="button" tabindex="0" aria-label="Xem chi tiết GPA lớp" onclick="openKpiDetail('gpa')" onkeydown="handleKpiKey(event, 'gpa')">
+            <div class="kpi-head">
+              <span class="kpi-label">GPA Bình quân lớp</span>
+              <div class="kpi-icon-wrap" style="background: #eef2ff; color: #4f46e5;">
+                <i data-lucide="trending-up" style="width: 20px; height: 20px;"></i>
+              </div>
+            </div>
+            <div class="kpi-value">2.82 <span style="font-size: 14px; font-weight: 500; color: #64748b;">/ 4.00</span></div>
+            <div class="kpi-sub" style="color: #16a34a; font-weight: 600;">↑ +0.08 so với HK2</div>
+          </div>
+
+          <div class="kpi-card" role="button" tabindex="0" aria-label="Xem danh sách cảnh báo học vụ" onclick="openKpiDetail('alerts')" onkeydown="handleKpiKey(event, 'alerts')">
+<div class="kpi-head">
+              <span class="kpi-label">Tỷ lệ cảnh báo học vụ</span>
+              <div class="kpi-icon-wrap" style="background: #fef2f2; color: #dc2626;">
+                <i data-lucide="alert-triangle" style="width: 20px; height: 20px;"></i>
+              </div>
+            </div>
+            <div class="kpi-value" style="color: #dc2626;">6.2% <span style="font-size: 14px; font-weight: 500; color: #dc2626;">(3 SV)</span></div>
+            <div class="kpi-sub" style="color: #dc2626; font-weight: 600;">Cần CVHT can thiệp gấp</div>
+          </div>
+
+          <div class="kpi-card" role="button" tabindex="0" aria-label="Xem chi tiết tiến độ tín chỉ" onclick="openKpiDetail('credits')" onkeydown="handleKpiKey(event, 'credits')">
+            <div class="kpi-head">
+              <span class="kpi-label">Tín chỉ TB hoàn thành</span>
+              <div class="kpi-icon-wrap" style="background: #f0fdf4; color: #16a34a;">
+                <i data-lucide="check-circle-2" style="width: 20px; height: 20px;"></i>
+              </div>
+            </div>
+            <div class="kpi-value">78 <span style="font-size: 14px; font-weight: 500; color: #64748b;">/ 140 TC</span></div>
+            <div class="kpi-sub">Đạt 55.7% kế hoạch toàn khóa</div>
+          </div>
+        </div>
+
+        <!-- Course debt and retake history summary -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <h3 class="card-title">Tình trạng môn học toàn lớp</h3>
+            <span style="font-size:12px;color:#64748b;" id="dashboard-grade-data-status">Tổng hợp từ bảng điểm MySQL</span>
+          </div>
+          <div class="card-body" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;">
+            <div>
+              <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Tổng môn còn nợ</div>
+              <div id="dashboard-current-debt-courses" style="font-size:26px;font-weight:800;color:#dc2626;margin-top:5px;">—</div>
+              <div style="font-size:11px;color:#64748b;">Tính theo kết quả mới nhất của từng môn</div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Tổng môn từng trượt</div>
+              <div id="dashboard-ever-failed-courses" style="font-size:26px;font-weight:800;color:#d97706;margin-top:5px;">—</div>
+              <div style="font-size:11px;color:#64748b;">Đếm môn trượt ít nhất một lần</div>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;">Môn đã học lại đạt</div>
+              <div id="dashboard-retaken-courses" style="font-size:26px;font-weight:800;color:#16a34a;margin-top:5px;">—</div>
+              <div style="font-size:11px;color:#64748b;">Từng trượt nhưng lần mới nhất đã đạt</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="chart-grid">
+          <div class="card" style="margin-bottom: 0;">
+            <div class="card-header">
+              <h3 class="card-title">Phân Bố Xếp Loại Học Lực Lớp</h3>
+              <span style="font-size: 12px; color: #64748b;">Tổng 48 sinh viên</span>
+            </div>
+            <div class="card-body" style="height: 280px; display: flex; align-items: center; justify-content: center;">
+              <canvas id="chart-distribution"></canvas>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom: 0;">
+            <div class="card-header">
+              <h3 class="card-title">Diễn Biến GPA Trung Bình Qua 4 Học Kỳ</h3>
+              <span class="badge badge-success">Xu hướng tăng (+0.17)</span>
+            </div>
+            <div class="card-body" style="height: 280px; display: flex; align-items: center; justify-content: center;">
+              <canvas id="chart-timeline"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Urgent Warning Action List -->
+        <div class="card" style="margin-top: 24px;">
+          <div class="card-header">
+            <h3 class="card-title">Sinh Viên Thuộc Diện Cảnh Báo Khẩn Cấp Cần Can Thiệp</h3>
+            <button class="btn btn-outline btn-sm" onclick="switchTab('alerts')">Xem chi tiết cảnh báo →</button>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <div id="dashboard-urgent-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==================== VIEW 2: DANH SÁCH SINH VIÊN ==================== -->
+      <div id="view-students" class="view-container">
+<div class="card">
+          <div class="card-header" style="flex-wrap: wrap; gap: 14px;">
+            <div>
+              <h3 class="card-title">Danh Sách Toàn Bộ Sinh Viên Lớp D21HTTT01</h3>
+              <p style="font-size: 12px; color: #64748b; margin-top: 2px;">Cập nhật từ dữ liệu học bạ điện tử HK1 (2023 - 2024)</p>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <!-- Filter status dropdown -->
+              <select id="filter-status-select" class="form-select" style="width: 170px;" onchange="applyFilters()">
+                <option value="ALL">Tất cả tình trạng</option>
+                <option value="CRITICAL">Cảnh báo Mức 2 (Khẩn)</option>
+                <option value="WARNING">Nguy cơ tụt dốc</option>
+                <option value="NORMAL">Đạt chuẩn</option>
+                <option value="GOOD">Giỏi / Xuất sắc</option>
+              </select>
+
+              <!-- Sort dropdown -->
+              <select id="sort-select" class="form-select" style="width: 170px;" onchange="applyFilters()">
+                <option value="gpa-desc">Sắp xếp: GPA giảm dần</option>
+                <option value="gpa-asc">Sắp xếp: GPA tăng dần</option>
+                <option value="credits-desc">Tín chỉ: Cao đến thấp</option>
+              </select>
+
+              <button class="btn btn-primary" onclick="openStudentModal()">
+                <i data-lucide="user-plus" style="width: 14px; height: 14px;"></i>
+                <span>Thêm sinh viên</span>
+              </button>
+              <button class="btn btn-outline" onclick="resetFilters()">
+                <i data-lucide="rotate-ccw" style="width: 14px; height: 14px;"></i>
+                <span>Đặt lại</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Sinh viên & MSSV</th>
+                  <th>Tình trạng học vụ</th>
+                  <th>CPA Tích lũy</th>
+                  <th>GPA Học kỳ</th>
+                  <th>Tiến độ tín chỉ</th>
+                  <th>Môn còn nợ / Từng trượt</th>
+                  <th>Tư vấn gần nhất</th>
+                  <th style="text-align: right;">Hành động</th>
+                </tr>
+              </thead>
+              <tbody id="student-table-body">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+          
+          <div style="padding: 14px 22px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; color: #64748b;">
+            <span id="student-count-summary">Hiển thị 6 / 6 sinh viên mẫu</span>
+            <span>Khóa 2021 - 2025 • Chuẩn đầu ra 140 Tín chỉ</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==================== VIEW: LỘ TRÌNH HỌC TẬP ==================== -->
+      <div id="view-roadmap" class="view-container">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px;">
+          <div>
+            <h2 style="font-size:22px;font-weight:800;color:#0f172a;">Lộ Trình Học Tập Cá Nhân</h2>
+            <p style="font-size:13px;color:#64748b;margin-top:5px;">Theo dõi tín chỉ đã tích lũy, môn cần học lại và kế hoạch hoàn thành chương trình 140 tín chỉ.</p>
+          </div>
+          <div class="roadmap-toolbar">
+            <select id="roadmap-student-select" class="form-select roadmap-select" onchange="renderRoadmap()">
+              <option value="">Chọn sinh viên</option>
+            </select>
+            <button class="btn btn-outline" type="button" onclick="renderRoadmap()">
+              <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+              <span>Cập nhật</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="roadmap-content">
+          <div class="roadmap-empty">Vui lòng đăng nhập và chọn sinh viên để xem lộ trình học tập.</div>
+        </div>
+      </div>
+
+      <!-- ==================== VIEW 3: CẢNH BÁO & SỔ TAY TƯ VẤN ==================== -->
+      <div id="view-alerts" class="view-container">
+        
+        <!-- Rules Banner -->
+<div style="background: #eff6ff; border: 1px solid var(--primary-border); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="shield-alert" style="color: var(--primary); width: 20px; height: 20px;"></i>
+              <h4 style="font-size: 15px; font-weight: 700; color: #1e3a8a;">Thuật Toán Phát Hiện Tự Động (Rules Engine v2.5)</h4>
+            </div>
+            <p style="font-size: 12.5px; color: #3b82f6; margin-top: 4px;">
+              Rules Engine tự động kiểm tra 4 dấu hiệu: <strong>GPA HK &lt; 2.0</strong>, <strong>GPA giảm &ge; 0.8</strong>, <strong>trượt môn tiên quyết</strong> và <strong>nợ &ge; 12 tín chỉ</strong>. Xếp <strong>Mức 2</strong> khi CPA &lt; 2.0, GPA HK &lt; 1.5 hoặc nợ &ge; 12 TC; các trường hợp còn lại được xếp Mức 1 khi vi phạm quy tắc.
+            </p>
+          </div>
+          <button class="btn btn-outline" style="background: white;" onclick="rescanAlerts()">
+            <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i>
+            <span>Quét lại dữ liệu</span>
+          </button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.6fr 1.4fr; gap: 24px;">
+          
+          <!-- Alert List -->
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 14px; color: #0f172a;">Danh Sách Ca Cảnh Báo Cần Xử Lý</h3>
+            <div id="alerts-cards-list" style="display: flex; flex-direction: column; gap: 14px;">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+          <!-- Advising Notebook / Log Form -->
+          <div class="card" style="height: fit-content;">
+            <div class="card-header">
+              <h3 class="card-title">Sổ Tay Ghi Nhận Tư Vấn Nhanh</h3>
+              <span class="badge badge-info">1-on-1 CVHT</span>
+            </div>
+            <div class="card-body">
+              <form id="advising-form" onsubmit="handleSaveAdvising(event)">
+                <div style="margin-bottom: 14px;">
+                  <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Chọn sinh viên</label>
+                  <select id="advising-student-select" class="form-select" required>
+                    <!-- Filled by JS -->
+                  </select>
+                </div>
+
+                <div style="margin-bottom: 14px;">
+                  <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Hình thức & Phân loại</label>
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <select id="advising-type" class="form-select">
+                      <option value="Trực tiếp">Trực tiếp tại văn phòng</option>
+<option value="Online">Online qua Google Meet</option>
+                      <option value="Điện thoại">Điện thoại cho phụ huynh</option>
+                    </select>
+                    <select id="advising-category" class="form-select">
+                      <option value="Học lực">Học lực / Cải thiện điểm</option>
+                      <option value="Tâm lý">Tâm lý / Làm thêm quá giờ</option>
+                      <option value="Nợ môn">Đăng ký học hè trả nợ</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 14px;">
+                  <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Nội dung trao đổi & Nguyên nhân khó khăn</label>
+                  <textarea id="advising-content" class="form-textarea" rows="3" placeholder="Ghi nhận lý do sinh viên sụt giảm kết quả, vắng học..." required></textarea>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                  <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Kế hoạch cam kết cải thiện (Action Plan)</label>
+                  <textarea id="advising-action" class="form-textarea" rows="2" placeholder="Cam kết: giảm giờ làm thêm, đăng ký thi lại môn CSDL..." required></textarea>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px; font-size: 12.5px; color: #475569;">
+                  <input type="checkbox" id="sms-parent-check" checked style="accent-color: var(--primary);">
+                  <label for="sms-parent-check">Gửi tin nhắn SMS thông báo tóm tắt đến Phụ huynh</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px;">
+                  <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+                  <span>Lưu Biên Bản Tư Vấn & Cập Nhật Hồ Sơ</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ==================== VIEW 4: HỒ SƠ CHI TIẾT SINH VIÊN ==================== -->
+      <div id="view-detail" class="view-container">
+        
+        <div style="margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center;">
+          <button class="btn btn-outline" onclick="switchTab('students')">
+            <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+            <span>Quay lại danh sách</span>
+          </button>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-outline" onclick="printStudentReport()">
+              <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
+              <span>In Học Bạ PDF</span>
+            </button>
+<button class="btn btn-primary" onclick="openAdvisingModal()">
+              <i data-lucide="message-square-plus" style="width: 16px; height: 16px;"></i>
+              <span>Tư vấn sinh viên này</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Student Profile Header Card -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+              <div id="detail-avatar" style="width: 68px; height: 68px; background: #e0e7ff; color: var(--primary); font-size: 24px; font-weight: 800; border-radius: 16px; display: flex; align-items: center; justify-content: center; border: 2px solid #bfdbfe;">
+                D
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <h2 id="detail-name" style="font-size: 22px; font-weight: 800; color: #0f172a;">Trần Văn Dũng</h2>
+                  <span id="detail-status-badge" class="badge badge-critical">Cảnh báo Mức 2</span>
+                </div>
+                <p style="font-size: 13px; color: #64748b; margin-top: 4px;">
+                  MSSV: <strong id="detail-id" style="color: #0f172a;">2110023</strong> • Lớp: <strong>D21HTTT01</strong> • Ngành: <strong>Hệ thống Thông tin</strong>
+                </p>
+                <p style="font-size: 12.5px; color: #64748b; margin-top: 2px;">
+                  Email: <span id="detail-email">dung.tv21@st.edu.vn</span> • SĐT: <span id="detail-phone">0912.345.678</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Profile metrics -->
+            <div style="display: flex; gap: 24px; text-align: right;">
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">CPA Tích Lũy</div>
+                <div id="detail-cpa" style="font-size: 26px; font-weight: 800; color: #dc2626;">1.68</div>
+                <div style="font-size: 11px; color: #dc2626; font-weight: 600;">Dưới ngưỡng 2.0</div>
+              </div>
+              <div style="width: 1px; background: var(--border);"></div>
+              <div>
+                <div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Tiến độ tín chỉ</div>
+                <div id="detail-credits" style="font-size: 26px; font-weight: 800; color: #0f172a;">62 <span style="font-size: 14px; color: #64748b;">/140</span></div>
+                <div style="font-size: 11px; color: #64748b;">Chậm 18 tín chỉ</div>
+              </div>
+              <div style="width: 1px; background: var(--border);"></div>
+              <div>
+<div style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">Môn còn nợ hiện tại</div>
+                <div id="detail-debt" style="font-size: 26px; font-weight: 800; color: #dc2626;">0 <span style="font-size: 14px; color: #64748b;">môn</span></div>
+                <div id="detail-ever-failed" style="font-size: 11px; color: #d97706; font-weight: 600;">Từng trượt: 0 môn • Học lại đạt: 0 môn</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grade Transcript Table & Advising History Grid -->
+        <div style="display: grid; grid-template-columns: 1.6fr 1.4fr; gap: 24px;">
+          
+          <!-- Transcript -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title" id="detail-course-table-title">Kết quả học phần theo lần học mới nhất</h3>
+              <span id="detail-course-table-subtitle" style="font-size: 12px; color: #64748b;">Dữ liệu từ MySQL</span>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mã HP & Tên môn học</th>
+                    <th>TC</th>
+                    <th>Quá trình (40%)</th>
+                    <th>Cuối kỳ (60%)</th>
+                    <th>Hệ 10</th>
+                    <th>Điểm chữ</th>
+                    <th>Kết quả</th>
+                  </tr>
+                </thead>
+                <tbody id="detail-courses-body">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Advising History Timeline -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Lịch Sử Tư Vấn & Can Thiệp CVHT</h3>
+              <span class="badge badge-info" id="detail-history-count">2 buổi</span>
+            </div>
+            <div class="card-body" id="detail-advising-timeline" style="display: flex; flex-direction: column; gap: 16px;">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+        </div>
+
+        <div class="card" style="margin-top: 24px;">
+          <div class="card-header">
+            <h3 class="card-title">Môn còn nợ và lịch sử học lại</h3>
+            <span class="badge badge-info" id="detail-course-status-count">Đang tải dữ liệu điểm</span>
+          </div>
+          <div class="card-body" id="detail-course-debt-history">
+            <!-- Tính từ GET /api/students/:id/grades -->
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ==================== MODAL THÊM / SỬA SINH VIÊN ==================== -->
+  <div id="student-modal" class="modal-overlay" onclick="closeStudentModalOnOutside(event)">
+    <div class="modal-card">
+      <div style="padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <h3 id="student-modal-title" style="font-size:16px;font-weight:800;color:#0f172a;">Thêm sinh viên mới</h3>
+        <button type="button" onclick="closeStudentModal()" style="background:transparent;border:none;cursor:pointer;color:#94a3b8;" aria-label="Đóng">
+          <i data-lucide="x" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+      <div style="padding:22px;max-height:75vh;overflow:auto;">
+        <form id="student-form" onsubmit="saveStudentForm(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div>
+              <label for="student-form-id" style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Mã số sinh viên (MSSV) *</label>
+              <input id="student-form-id" class="form-input" required maxlength="20" pattern="[A-Za-z0-9_-]+" placeholder="Ví dụ: 2110123">
+            </div>
+            <div>
+              <label for="student-form-name" style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Họ và tên *</label>
+              <input id="student-form-name" class="form-input" required maxlength="100" placeholder="Nhập họ và tên">
+            </div>
+            <div>
+              <label for="student-form-class" style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Lớp *</label>
+              <input id="student-form-class" class="form-input" required maxlength="30" value="D21HTTT01" placeholder="Ví dụ: D21HTTT01">
+            </div>
+            <div>
+              <label for="student-form-email" style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Email *</label>
+              <input id="student-form-email" class="form-input" type="email" required maxlength="120" placeholder="sinhvien@example.com">
+            </div>
+            <div>
+              <label for="student-form-phone" style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Số điện thoại</label>
+              <input id="student-form-phone" class="form-input" type="tel" maxlength="20" placeholder="Nhập số điện thoại">
+            </div>
+            <div>
+              <label for="student-form-cpa" style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">CPA tích lũy (0–4) *</label>
+              <input id="student-form-cpa" class="form-input" type="number" required min="0" max="4" step="0.01" value="2.50">
+            </div>
+            <div>
+              <label for="student-form-gpa" style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">GPA học kỳ (0–4) *</label>
+              <input id="student-form-gpa" class="form-input" type="number" required min="0" max="4" step="0.01" value="2.50">
+            </div>
+            <div>
+              <label for="student-form-prev-gpa" style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">GPA học kỳ trước</label>
+              <input id="student-form-prev-gpa" class="form-input" type="number" min="0" max="4" step="0.01" value="2.50">
+            </div>
+            <div>
+              <label for="student-form-credits" style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Tín chỉ tích lũy</label>
+              <input id="student-form-credits" class="form-input" type="number" required min="0" max="300" step="1" value="0">
+            </div>
+            <div>
+              <label for="student-form-debt" style="display:block;font-size:12px;font-weight:700;margin-bottom:6px;">Tín chỉ nợ</label>
+              <input id="student-form-debt" class="form-input" type="number" required min="0" max="300" step="1" value="0">
+            </div>
+          </div>
+          <p style="font-size:11px;color:#64748b;margin-top:12px;">* Trường bắt buộc. Hệ thống sẽ dùng GPA và tín chỉ để cập nhật cảnh báo minh họa.</p>
+          <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;">
+            <button type="button" class="btn btn-outline" onclick="closeStudentModal()">Hủy</button>
+            <button type="submit" class="btn btn-primary" id="student-form-submit">Lưu sinh viên</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL TƯ VẤN ==================== -->
+  <div id="advising-modal" class="modal-overlay" onclick="closeModalOnOutside(event)">
+    <div class="modal-card">
+      <div style="padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="font-size: 16px; font-weight: 800; color: #0f172a;">Thêm Mới Nhật Ký Tư Vấn Sinh Viên</h3>
+        <button onclick="closeAdvisingModal()" style="background: transparent; border: none; cursor: pointer; color: #94a3b8;">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+
+      <div style="padding: 22px;">
+        <form onsubmit="handleModalSaveAdvising(event)">
+          <div style="margin-bottom: 14px;">
+<label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Sinh viên</label>
+            <select id="modal-student-select" class="form-select" required></select>
+          </div>
+
+          <div style="margin-bottom: 14px;">
+            <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Nội dung tư vấn</label>
+            <textarea id="modal-content" class="form-textarea" rows="3" placeholder="Lý do sinh viên gặp khó khăn..." required></textarea>
+          </div>
+
+          <div style="margin-bottom: 18px;">
+            <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">Kế hoạch cam kết</label>
+            <textarea id="modal-action" class="form-textarea" rows="2" placeholder="Biện pháp giải quyết cụ thể..." required></textarea>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" class="btn btn-outline" onclick="closeAdvisingModal()">Hủy</button>
+            <button type="submit" class="btn btn-primary">Lưu biên bản</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast">
+    <i data-lucide="check-circle" style="color: #22c55e; width: 18px; height: 18px;"></i>
+    <span id="toast-message">Đã lưu thành công!</span>
+  </div>
+
+  <!-- ==================== JAVASCRIPT THUẦN ==================== -->
+
+  <div id="password-modal" onclick="if(event.target===this)closePasswordModal()">
+    <form class="password-card" onsubmit="handleChangePassword(event)">
+      <h2 style="font-size:20px;font-weight:800;color:#0f172a;margin:0 0 6px">Đổi mật khẩu</h2>
+      <p style="font-size:13px;color:#64748b;margin:0 0 20px">Tạo mật khẩu mới theo ý bạn. Mật khẩu nên có ít nhất 8 ký tự.</p>
+      <label for="current-password" style="font-size:13px;font-weight:700">Mật khẩu hiện tại</label>
+      <input id="current-password" class="auth-field" type="password" required autocomplete="current-password" placeholder="Nhập mật khẩu hiện tại">
+      <label for="new-password" style="font-size:13px;font-weight:700">Mật khẩu mới</label>
+      <input id="new-password" class="auth-field" type="password" required minlength="8" autocomplete="new-password" placeholder="Ít nhất 8 ký tự">
+      <label for="confirm-password" style="font-size:13px;font-weight:700">Xác nhận mật khẩu mới</label>
+      <input id="confirm-password" class="auth-field" type="password" required minlength="8" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới">
+      <p id="password-error" class="auth-error"></p>
+      <div class="password-actions"><button type="button" onclick="closePasswordModal()">Hủy</button><button type="submit" class="save">Lưu mật khẩu</button></div>
+    </form>
+  </div>
+
+  <script>
+
+    // Xác thực thật qua Node.js session; giao diện đăng nhập được giữ nguyên.
+    async function handleLogin(event) {
+      event.preventDefault();
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const error = document.getElementById('login-error');
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Đăng nhập không thành công.');
+        document.getElementById('login-screen').style.display = 'none';
+        error.style.display = 'none';
+        document.getElementById('login-password').value = '';
+        await refreshFromServer();
+        showToast('Đăng nhập thành công!');
+      } catch (e) {
+        error.textContent = e.message || 'Không kết nối được máy chủ.';
+        error.style.display = 'block';
+      }
+    }
+    async function logout() {
+      try { await fetch('/api/auth/logout', { method: 'POST' }); } catch (e) {}
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('login-username').value = '';
+      document.getElementById('login-password').value = '';
+      document.getElementById('login-error').style.display = 'none';
+      students = []; selectedStudent = null; refreshAllViews();
+      showToast('Bạn đã đăng xuất.');
+    }
+    function openPasswordModal() {
+      document.getElementById('password-error').style.display = 'none';
+      document.getElementById('password-modal').classList.add('active');
+    }
+    function closePasswordModal() {
+      document.getElementById('password-modal').classList.remove('active');
+      document.querySelector('#password-modal form').reset();
+    }
+    async function handleChangePassword(event) {
+      event.preventDefault();
+      const current = document.getElementById('current-password').value;
+      const next = document.getElementById('new-password').value;
+      const confirm = document.getElementById('confirm-password').value;
+      const error = document.getElementById('password-error');
+      const fail = message => { error.textContent = message; error.style.display = 'block'; };
+      if (next.length < 8) return fail('Mật khẩu mới phải có ít nhất 8 ký tự.');
+      if (next === current) return fail('Mật khẩu mới phải khác mật khẩu hiện tại.');
+      if (next !== confirm) return fail('Mật khẩu xác nhận không khớp.');
+      try {
+        const response = await fetch('/api/auth/change-password', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentPassword: current, newPassword: next })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Không đổi được mật khẩu.');
+        closePasswordModal(); showToast(data.message || 'Đổi mật khẩu thành công.');
+      } catch (e) { fail(e.message); }
+    }
+
+    // 1. DATA MODEL
+    const initialStudents = [
+      {
+        id: "2110023",
+        name: "Trần Văn Dũng",
+        classCode: "D21HTTT01",
+        email: "dung.tv21@st.edu.vn",
+        phone: "0912.345.678",
+        cpa: 1.68,
+        gpaHK: 1.42,
+        prevGpa: 2.10,
+        accumulatedCredits: 62,
+        debtCredits: 6,
+        failedCoursesCount: 2,
+        status: "CRITICAL",
+        statusLabel: "Cảnh báo Mức 2",
+        reasons: ["GPA học kỳ < 2.0 (1.42)", "Rớt môn tiên quyết: Cơ sở dữ liệu nâng cao", "Tụt giảm điểm 3 kỳ liên tiếp"],
+        lastAdvising: "04/11/2023",
+        advisingNote: "Chưa nộp cam kết học hè",
+        courses: [
+          { code: "IT3022", name: "Cơ sở dữ liệu nâng cao (Tiên quyết)", tc: 3, p1: 4.5, p2: 3.0, total: 3.6, letter: "F (0.0)", pass: false },
+          { code: "IT3110", name: "Lập trình Web nâng cao", tc: 3, p1: 7.0, p2: 5.5, total: 6.1, letter: "C (2.0)", pass: true },
+          { code: "IS2010", name: "Phân tích thiết kế hệ thống", tc: 4, p1: 5.0, p2: 4.0, total: 4.4, letter: "D (1.0)", pass: true },
+          { code: "CS2040", name: "Mạng máy tính cơ sở", tc: 3, p1: 6.0, p2: 5.0, total: 5.4, letter: "D+ (1.5)", pass: true }
+        ],
+        advisingHistory: [
+{ date: "20/09/2023", title: "Buổi 2: Kế hoạch trả nợ môn CSDL", content: "Sinh viên cam kết giảm giờ làm thêm xuống < 10h/tuần, đăng ký học lại kỳ hè.", note: "Đã gửi SMS phụ huynh" },
+          { date: "10/05/2023", title: "Buổi 1: Động viên phương pháp học tập", content: "Chia sẻ phương pháp học nhóm và ôn thi cuối kỳ hiệu quả.", note: "Gặp trực tiếp văn phòng Khoa" }
+        ]
+      },
+      {
+        id: "2110056",
+        name: "Lê Thị Mai",
+        classCode: "D21HTTT01",
+        email: "mai.lt21@st.edu.vn",
+        phone: "0987.654.321",
+        cpa: 2.38,
+        gpaHK: 1.80,
+        prevGpa: 2.95,
+        accumulatedCredits: 70,
+        debtCredits: 6,
+        failedCoursesCount: 1,
+        status: "WARNING",
+        statusLabel: "Nguy cơ tụt dốc",
+        reasons: ["GPA tụt mạnh -1.15 điểm (từ 2.95 xuống 1.80)", "Điểm chuyên cần và giữa kỳ thấp ở 2 môn"],
+        lastAdvising: "12/11/2023",
+        advisingNote: "Đã hẹn tư vấn 1-on-1",
+        courses: [
+          { code: "IT3022", name: "Cơ sở dữ liệu nâng cao", tc: 3, p1: 5.0, p2: 5.0, total: 5.0, letter: "D (1.0)", pass: true },
+          { code: "IT3110", name: "Lập trình Web nâng cao", tc: 3, p1: 4.0, p2: 3.5, total: 3.7, letter: "F (0.0)", pass: false },
+          { code: "IS2010", name: "Phân tích thiết kế hệ thống", tc: 4, p1: 6.5, p2: 6.0, total: 6.2, letter: "C (2.0)", pass: true }
+        ],
+        advisingHistory: [
+          { date: "12/11/2023", title: "Buổi 1: Rà soát nguyên nhân tụt điểm", content: "Sinh viên tham gia CLB quá nhiều dẫn đến thiếu ngủ, đã nhắc nhở cân đối thời gian.", note: "Hẹn tái khám sau thi" }
+        ]
+      },
+      {
+        id: "2110089",
+        name: "Phạm Quốc Bảo",
+        classCode: "D21HTTT01",
+        email: "bao.pq21@st.edu.vn",
+        phone: "0934.777.888",
+        cpa: 1.98,
+        gpaHK: 1.80,
+        prevGpa: 2.05,
+        accumulatedCredits: 50,
+        debtCredits: 12,
+        failedCoursesCount: 3,
+        status: "CRITICAL",
+        statusLabel: "Cảnh báo Mức 1",
+        reasons: ["Nợ 12 tín chỉ tích lũy (vượt ngưỡng 10 TC)", "Tiến độ học tập chậm 1 năm so với chuẩn"],
+        lastAdvising: "25/10/2023",
+        advisingNote: "Cần phụ huynh phối hợp",
+        courses: [
+          { code: "MATH101", name: "Toán rời rạc", tc: 3, p1: 4.0, p2: 3.0, total: 3.4, letter: "F (0.0)", pass: false },
+          { code: "IT3022", name: "Cơ sở dữ liệu nâng cao", tc: 3, p1: 5.5, p2: 5.0, total: 5.2, letter: "D (1.0)", pass: true }
+        ],
+        advisingHistory: [
+          { date: "25/10/2023", title: "Buổi 1: Lập lộ trình trả nợ tín chỉ", content: "Lên kế hoạch trả nợ 2 môn trong kỳ hè năm 3.", note: "Đã liên hệ phụ huynh" }
+        ]
+      },
+      {
+        id: "2110012",
+        name: "Nguyễn Hoàng Long",
+        classCode: "D21HTTT01",
+        email: "long.nh21@st.edu.vn",
+        phone: "0903.111.222",
+        cpa: 3.78,
+        gpaHK: 3.85,
+prevGpa: 3.72,
+        accumulatedCredits: 84,
+        debtCredits: 0,
+        failedCoursesCount: 0,
+        status: "GOOD",
+        statusLabel: "Xuất sắc",
+        reasons: [],
+        lastAdvising: "20/10/2023",
+        advisingNote: "Tư vấn NCKH & Học bổng",
+        courses: [
+          { code: "IT3022", name: "Cơ sở dữ liệu nâng cao", tc: 3, p1: 9.5, p2: 9.0, total: 9.2, letter: "A (4.0)", pass: true },
+          { code: "IT3110", name: "Lập trình Web nâng cao", tc: 3, p1: 8.5, p2: 8.5, total: 8.5, letter: "A (4.0)", pass: true },
+          { code: "IS2010", name: "Phân tích thiết kế hệ thống", tc: 4, p1: 8.0, p2: 8.5, total: 8.3, letter: "B+ (3.5)", pass: true }
+        ],
+        advisingHistory: [
+          { date: "20/10/2023", title: "Buổi 1: Định hướng nghiên cứu khoa học", content: "Giới thiệu sinh viên vào Lab nghiên cứu Data Analytics của Khoa.", note: "Hoàn thành tốt" }
+        ]
+      },
+      {
+        id: "2110044",
+        name: "Võ Minh Trí",
+        classCode: "D21HTTT01",
+        email: "tri.vm21@st.edu.vn",
+        phone: "0918.333.444",
+        cpa: 2.95,
+        gpaHK: 3.00,
+        prevGpa: 2.80,
+        accumulatedCredits: 76,
+        debtCredits: 0,
+        failedCoursesCount: 0,
+        status: "NORMAL",
+        statusLabel: "Đạt chuẩn",
+        reasons: [],
+        lastAdvising: "18/09/2023",
+        advisingNote: "Tư vấn đăng ký tín chỉ HK2",
+        courses: [
+          { code: "IT3022", name: "Cơ sở dữ liệu nâng cao", tc: 3, p1: 7.0, p2: 7.0, total: 7.0, letter: "B (3.0)", pass: true },
+          { code: "IT3110", name: "Lập trình Web nâng cao", tc: 3, p1: 7.5, p2: 7.0, total: 7.2, letter: "B (3.0)", pass: true }
+        ],
+        advisingHistory: [
+          { date: "18/09/2023", title: "Buổi 1: Đăng ký học phần", content: "Hướng dẫn chọn môn tự chọn phù hợp với định hướng hệ thống.", note: "Đạt yêu cầu" }
+        ]
+      },
+      {
+        id: "2110078",
+        name: "Đỗ Phương Thảo",
+        classCode: "D21HTTT01",
+        email: "thao.dp21@st.edu.vn",
+        phone: "0977.555.666",
+        cpa: 3.54,
+        gpaHK: 3.62,
+        prevGpa: 3.58,
+        accumulatedCredits: 78,
+        debtCredits: 0,
+        failedCoursesCount: 0,
+        status: "GOOD",
+        statusLabel: "Giỏi",
+        reasons: [],
+        lastAdvising: "08/11/2023",
+        advisingNote: "Định hướng thực tập kỳ 6",
+        courses: [
+          { code: "IT3022", name: "Cơ sở dữ liệu nâng cao", tc: 3, p1: 8.5, p2: 8.0, total: 8.2, letter: "B+ (3.5)", pass: true },
+          { code: "IS2010", name: "Phân tích thiết kế hệ thống", tc: 4, p1: 9.0, p2: 8.5, total: 8.7, letter: "A (4.0)", pass: true }
+        ],
+        advisingHistory: [
+          { date: "08/11/2023", title: "Buổi 1: Định hướng tuyển dụng", content: "Tư vấn chọn doanh nghiệp thực tập vị trí Business Analyst.", note: "Hoàn thành" }
+        ]
+      }
+    ];
+
+    // Dữ liệu demo được lưu ở localStorage trên trình duyệt hiện tại.
+    // Đây KHÔNG phải cơ sở dữ liệu dùng chung và không thay thế backend bảo mật.
+    // Du lieu that duoc nap tu MySQL sau khi dang nhap.
+    let students = [];
+    let selectedStudent = null;
+    let distributionChart = null;
+    let timelineChart = null;
+    let syncQueue = Promise.resolve();
+
+    // Xep thu tu hoc ky theo nam va hoc ky, vi du HK1_2027 > HK3_2026.
+    function semesterRank(value) {
+      const semester = String(value || '').trim();
+      let match = semester.match(/^(?:HK|H)(\d+)[_-](\d{4})$/i);
+      if (match) return Number(match[2]) * 100 + Number(match[1]);
+      match = semester.match(/^(\d{4})[_-](?:HK|H)(\d+)$/i);
+      if (match) return Number(match[1]) * 100 + Number(match[2]);
+      return null;
+    }
+
+    function compareSemester(a, b) {
+      const rankA = semesterRank(a);
+      const rankB = semesterRank(b);
+      if (rankA !== null && rankB !== null) return rankA - rankB;
+      return String(a || '').localeCompare(String(b || ''), 'vi', { numeric: true });
+    }
+
+    // Backend quy doi tu 4.0/10 tro len la dat.
+    function gradeIsPassed(grade) {
+      const score = Number(grade.totalScore ?? grade.total_score);
+      if (Number.isFinite(score)) return score >= 4.0;
+      const letter = String(grade.letterGrade || grade.letter_grade || '').trim().toUpperCase();
+      return Boolean(letter && !letter.startsWith('F'));
+    }
+
+    function summarizeStudentCourseGrades(student, gradeRows) {
+      const groups = new Map();
+      (Array.isArray(gradeRows) ? gradeRows : []).forEach(row => {
+        const code = String(row.courseCode || row.course_code || '').trim();
+        const name = String(row.courseName || row.course_name || '').trim();
+        const key = code || name;
+        if (!key) return;
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(row);
+      });
+
+      const latestCourses = [];
+      const currentDebtCourses = [];
+      const courseAttemptHistory = [];
+      let debtCredits = 0;
+      let everFailedCoursesCount = 0;
+      let retakenCoursesCount = 0;
+
+      groups.forEach((attempts, key) => {
+        attempts.sort((a, b) => compareSemester(a.semester, b.semester));
+        const latest = attempts[attempts.length - 1];
+        const score = Number(latest.totalScore ?? latest.total_score);
+        const latestPass = gradeIsPassed(latest);
+        const hadFailed = attempts.some(attempt => !gradeIsPassed(attempt));
+        const credits = Number(latest.credits) || 0;
+        const attendance = Number(latest.attendance) || 0;
+        const midterm = Number(latest.midterm) || 0;
+        const finalScore = Number(latest.final) || 0;
+        const processScore = Number(((attendance * 0.1 + midterm * 0.3) / 0.4).toFixed(2));
+        const code = latest.courseCode || latest.course_code || key;
+        const name = latest.courseName || latest.course_name || key;
+        const course = {
+          code, name, tc: credits, p1: processScore, p2: finalScore,
+          total: Number.isFinite(score) ? score : 0,
+          letter: latest.letterGrade || latest.letter_grade || (latestPass ? 'Đạt' : 'F'),
+          pass: latestPass, semester: latest.semester,
+          totalScore: Number.isFinite(score) ? score : 0
+        };
+        latestCourses.push(course);
+
+        if (!latestPass) {
+          currentDebtCourses.push(course);
+          debtCredits += credits;
+        }
+        if (hadFailed) {
+          everFailedCoursesCount++;
+          if (latestPass) retakenCoursesCount++;
+          courseAttemptHistory.push({
+            code, name, credits, latestPass,
+            attempts: attempts.map(attempt => ({
+              semester: attempt.semester,
+              totalScore: Number(attempt.totalScore ?? attempt.total_score) || 0,
+              pass: gradeIsPassed(attempt)
+            }))
+          });
+        }
+      });
+
+      const byCode = (a, b) => String(a.code).localeCompare(String(b.code), 'vi', { numeric: true });
+      latestCourses.sort(byCode);
+      currentDebtCourses.sort(byCode);
+      courseAttemptHistory.sort(byCode);
+
+      student.gradeDataLoaded = true;
+      student.gradeDataError = '';
+      student.courseGradeHistory = gradeRows;
+      student.courses = latestCourses;
+      student.currentDebtCourses = currentDebtCourses;
+      student.courseAttemptHistory = courseAttemptHistory;
+      student.failedCoursesCount = currentDebtCourses.length;
+      student.debtCredits = debtCredits;
+      student.everFailedCoursesCount = everFailedCoursesCount;
+      student.retakenCoursesCount = retakenCoursesCount;
+    }
+
+    async function loadGradesForOneStudent(student) {
+      try {
+        // Route da co trong server.js: GET /api/students/:id/grades
+        const response = await fetch(`/api/students/${encodeURIComponent(student.id)}/grades`);
+        if (response.status === 401) throw new Error('Phiên đăng nhập đã hết hạn.');
+        if (!response.ok) throw new Error(`Không tải được bảng điểm (${response.status}).`);
+        const rows = await response.json();
+        if (!Array.isArray(rows)) throw new Error('API bảng điểm trả về dữ liệu không hợp lệ.');
+
+        if (rows.length > 0) {
+          summarizeStudentCourseGrades(student, rows);
+        } else {
+          // Chua co bang diem: giu cac chi so duoc luu trong students, khong tu dong gan 0.
+          student.gradeDataLoaded = true;
+          student.gradeDataError = '';
+          student.courseGradeHistory = [];
+          student.currentDebtCourses = [];
+          student.courseAttemptHistory = [];
+          student.everFailedCoursesCount = Number(student.everFailedCoursesCount) || 0;
+          student.retakenCoursesCount = Number(student.retakenCoursesCount) || 0;
+          student.failedCoursesCount = Number(student.failedCoursesCount) || 0;
+          student.debtCredits = Number(student.debtCredits) || 0;
+        }
+      } catch (error) {
+        // API loi thi hien thi chua tai, khong danh dong voi 0 mon no.
+        student.gradeDataLoaded = false;
+        student.gradeDataError = error.message || 'Không tải được bảng điểm.';
+        student.currentDebtCourses = student.currentDebtCourses || [];
+        student.courseAttemptHistory = student.courseAttemptHistory || [];
+        student.everFailedCoursesCount = Number(student.everFailedCoursesCount) || 0;
+      }
+    }
+
+    async function loadGradesForAllStudents() {
+      const batchSize = 8;
+      for (let i = 0; i < students.length; i += batchSize) {
+        await Promise.all(students.slice(i, i + batchSize).map(loadGradesForOneStudent));
+      }
+    }
+
+    async function refreshFromServer() {
+      const response = await fetch('/api/students');
+      if (response.status === 401) {
+        document.getElementById('login-screen').style.display = 'flex';
+        students = []; selectedStudent = null; refreshAllViews();
+        return;
+      }
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Không tải được dữ liệu sinh viên.');
+      students = Array.isArray(data) ? data : [];
+
+      // Chuẩn hóa dữ liệu mẫu hiện tại: trong bộ dữ liệu đang dùng, tất cả SV
+      // đều có 30 TC. Chuyển đồng loạt lên 60 TC và đồng bộ lại MySQL đúng một lần
+      // (sau khi cập nhật, điều kiện này không còn đúng nên không ghi đè tiến độ về sau).
+      const allStudentsHave30Credits = students.length > 0 &&
+        students.every(s => Number(s.accumulatedCredits) === 30);
+      if (allStudentsHave30Credits) {
+        students.forEach(s => { s.accumulatedCredits = 60; });
+      }
+
+      students.forEach(s => {
+        if (!Array.isArray(s.reasons)) s.reasons = [];
+        if (!Array.isArray(s.advisingHistory)) s.advisingHistory = [];
+        if (!Array.isArray(s.courses)) s.courses = [];
+        s.everFailedCoursesCount = Number(s.everFailedCoursesCount) || 0;
+        s.retakenCoursesCount = Number(s.retakenCoursesCount) || 0;
+      });
+
+      // Tai bang diem theo tung sinh vien, tinh so mon con no tu lan hoc moi nhat.
+      await loadGradesForAllStudents();
+      students.forEach(evaluateStudentAlerts);
+
+      // Lưu thay đổi tín chỉ về MySQL qua API đồng bộ sẵn có của dự án.
+      if (allStudentsHave30Credits) saveStudents();
+
+      selectedStudent = students[0] || null;
+      refreshAllViews();
+    }
+
+    function saveStudents() {
+      // Luu tam tren trinh duyet va dong bo UPSERT xuong MySQL; khong xoa du lieu DB.
+      try { localStorage.setItem('eduAdvisorStudents', JSON.stringify(students)); } catch (e) {}
+      const payload = students.map(s => ({
+        id: s.id, name: s.name, classCode: s.classCode, email: s.email, phone: s.phone,
+        cpa: s.cpa, gpaHK: s.gpaHK, prevGpa: s.prevGpa,
+        accumulatedCredits: s.accumulatedCredits, debtCredits: s.debtCredits,
+        failedCoursesCount: s.failedCoursesCount, lastAdvising: s.lastAdvising,
+        advisingNote: s.advisingNote, advisingHistory: s.advisingHistory || []
+      }));
+      syncQueue = syncQueue.then(async () => {
+        const response = await fetch('/api/students/sync', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ students: payload })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Không đồng bộ được dữ liệu.');
+      }).catch(error => showToast(error.message || 'Lỗi đồng bộ MySQL.'));
+      return true;
+    }
+
+    // Rules Engine v2.5: chạy trên dữ liệu vừa tải và khi CVHT bấm Quét lại.
+    // Đây là ngưỡng minh họa; cần đối chiếu quy chế đào tạo chính thức của trường.
+    function evaluateStudentAlerts(student) {
+      const reasons = [];
+      const gpa = Number(student.gpaHK) || 0;
+      const cpa = Number(student.cpa) || 0;
+      const previousRaw = student.prevGpa;
+      const previous = Number(previousRaw);
+      const hasPreviousGpa = previousRaw !== null && previousRaw !== undefined &&
+        previousRaw !== '' && Number.isFinite(previous);
+      const debt = Number(student.debtCredits) || 0;
+
+      // Quy tắc 1: GPA học kỳ dưới 2.0.
+      if (gpa < 2.0) reasons.push(`GPA học kỳ dưới 2.0 (${gpa.toFixed(2)})`);
+
+      // Quy tắc 2: GPA giảm ít nhất 0.8 điểm so với học kỳ trước.
+      if (hasPreviousGpa && previous - gpa >= 0.8) {
+        reasons.push(`GPA giảm ${(previous - gpa).toFixed(2)} điểm so với kỳ trước`);
+      }
+
+      // Quy tắc 3: trượt học phần tiên quyết (hỗ trợ nhiều định dạng dữ liệu API).
+      const failedPrerequisite = (student.courses || []).find(course => {
+        const letter = String(course.letter || '').trim().toUpperCase();
+        const result = String(course.result || course.status || '').toLowerCase();
+        const failed = course.pass === false || course.pass === 0 || course.pass === '0' ||
+          letter.startsWith('F') || result.includes('trượt') || result.includes('không đạt');
+        const name = `${course.name || course.course_name || ''} ${course.code || course.course_code || ''}`;
+        return failed && /tiên quyết|prerequisite/i.test(name);
+      });
+      if (failedPrerequisite) {
+        reasons.push(`Trượt học phần tiên quyết: ${failedPrerequisite.name || failedPrerequisite.course_name || failedPrerequisite.code || failedPrerequisite.course_code}`);
+      }
+
+      // Quy tắc 4: nợ từ 12 tín chỉ.
+      if (debt >= 12) reasons.push(`Nợ ${debt} tín chỉ (ngưỡng cảnh báo từ 12 TC)`);
+
+      // CPA dưới 2.0 là dấu hiệu nghiêm trọng và được đưa vào lý do Mức 2.
+      if (cpa < 2.0) reasons.push(`CPA tích lũy dưới 2.0 (${cpa.toFixed(2)})`);
+
+      student.reasons = [...new Set(reasons)];
+
+      // Phân loại ưu tiên Mức 2 trước Mức 1 để không bị nhãn nhẹ ghi đè.
+      if (gpa < 1.5 || cpa < 2.0 || debt >= 12) {
+        student.status = 'CRITICAL';
+        student.statusLabel = 'Cảnh báo Mức 2';
+      } else if (student.reasons.length > 0) {
+        student.status = 'WARNING';
+        student.statusLabel = 'Cảnh báo Mức 1';
+      } else if (cpa >= 3.2) {
+        student.status = 'GOOD';
+        student.statusLabel = cpa >= 3.6 ? 'Xuất sắc' : 'Giỏi';
+      } else {
+        student.status = 'NORMAL';
+        student.statusLabel = 'Đạt chuẩn';
+      }
+    }
+
+    function rescanAlerts() {
+      students.forEach(evaluateStudentAlerts);
+      saveStudents();
+      refreshAllViews();
+      showToast('Đã quét lại dữ liệu và cập nhật cảnh báo.');
+    }
+
+    function refreshAllViews() {
+      renderStudentsTable(getFilteredStudents());
+      renderDashboardUrgent();
+      renderAlertsView();
+      populateStudentDropdowns();
+      updateDashboardMetrics();
+      if (selectedStudent) renderStudentDetail(selectedStudent);
+      renderRoadmap();
+      updateCharts();
+      const alertCount = students.filter(s => s.reasons && s.reasons.length).length;
+      const badge = document.getElementById('sidebar-alert-badge');
+      if (badge) badge.textContent = alertCount;
+    }
+
+    function getFilteredStudents() {
+      const searchEl = document.getElementById('global-search-input');
+      const statusEl = document.getElementById('filter-status-select');
+      const sortEl = document.getElementById('sort-select');
+      const search = (searchEl?.value || '').toLowerCase().trim();
+      const status = statusEl?.value || 'ALL';
+      const sort = sortEl?.value || 'gpa-desc';
+      const result = students.filter(s =>
+        ((s.name || '').toLowerCase().includes(search) || String(s.id).includes(search)) &&
+        (status === 'ALL' || s.status === status)
+      );
+      if (sort === 'gpa-desc') result.sort((a,b) => (Number(b.cpa)||0) - (Number(a.cpa)||0));
+      else if (sort === 'gpa-asc') result.sort((a,b) => (Number(a.cpa)||0) - (Number(b.cpa)||0));
+      else if (sort === 'credits-desc') result.sort((a,b) => (Number(b.accumulatedCredits)||0) - (Number(a.accumulatedCredits)||0));
+      return result;
+    }
+
+    function updateDashboardMetrics() {
+      const total = students.length;
+      const alerts = students.filter(s => ['CRITICAL','WARNING'].includes(s.status)).length;
+      const average = total ? students.reduce((sum,s) => sum + (Number(s.cpa)||0), 0) / total : 0;
+      const credits = total ? students.reduce((sum,s) => sum + (Number(s.accumulatedCredits)||0), 0) / total : 0;
+      const gradesReady = students.length > 0 && students.every(s => s.gradeDataLoaded !== false);
+      const currentDebtCourses = students.reduce((sum, s) => sum + (Number(s.failedCoursesCount) || 0), 0);
+      const everFailedCourses = students.reduce((sum, s) => sum + (Number(s.everFailedCoursesCount) || 0), 0);
+      const retakenCourses = students.reduce((sum, s) => sum + (Number(s.retakenCoursesCount) || 0), 0);
+      const debtValue = document.getElementById('dashboard-current-debt-courses');
+      const failedValue = document.getElementById('dashboard-ever-failed-courses');
+      const retakenValue = document.getElementById('dashboard-retaken-courses');
+      const gradeStatus = document.getElementById('dashboard-grade-data-status');
+      if (debtValue) debtValue.textContent = gradesReady ? currentDebtCourses : 'Chưa đủ dữ liệu';
+      if (failedValue) failedValue.textContent = gradesReady ? everFailedCourses : 'Chưa đủ dữ liệu';
+      if (retakenValue) retakenValue.textContent = gradesReady ? retakenCourses : 'Chưa đủ dữ liệu';
+      if (gradeStatus) gradeStatus.textContent = gradesReady ? 'Đã tổng hợp bảng điểm MySQL' : 'Có sinh viên chưa tải được bảng điểm';
+      const values = document.querySelectorAll('#view-dashboard .kpi-value');
+      if (values[0]) values[0].innerHTML = `${total} <span style="font-size:14px;font-weight:500;color:#64748b;">sinh viên</span>`;
+      if (values[1]) values[1].innerHTML = `${average.toFixed(2)} <span style="font-size:14px;font-weight:500;color:#64748b;">/ 4.00</span>`;
+      if (values[2]) values[2].innerHTML = `${total ? (alerts/total*100).toFixed(1) : '0.0'}% <span style="font-size:14px;font-weight:500;color:#dc2626;">(${alerts} SV)</span>`;
+      if (values[3]) values[3].innerHTML = `${credits.toFixed(0)} <span style="font-size:14px;font-weight:500;color:#64748b;">/ 140 TC</span>`;
+      const labels = document.querySelectorAll('#view-dashboard .card-header span');
+      if (labels[0]) labels[0].textContent = `Tổng ${total} sinh viên`;
+      const alertActionLabel = document.getElementById('dashboard-alert-action-label');
+      if (alertActionLabel) alertActionLabel.textContent = alerts > 0
+        ? `Xử lý ${alerts} ca cảnh báo`
+        : 'Không có ca cảnh báo';
+    }
+
+    function updateCharts() {
+      if (distributionChart) {
+        const counts = [
+          students.filter(s => Number(s.cpa) >= 3.6).length,
+          students.filter(s => Number(s.cpa) >= 3.2 && Number(s.cpa) < 3.6).length,
+          students.filter(s => Number(s.cpa) >= 2.5 && Number(s.cpa) < 3.2).length,
+          students.filter(s => Number(s.cpa) >= 2.0 && Number(s.cpa) < 2.5).length,
+          students.filter(s => Number(s.cpa) < 2.0).length
+        ];
+        distributionChart.data.datasets[0].data = counts;
+        distributionChart.update();
+      }
+    }
+
+    // Dashboard KPI cards: route each card to the relevant detail view.
+    function handleKpiKey(event, target) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openKpiDetail(target);
+      }
+    }
+
+    function openKpiDetail(type) {
+      const search = document.getElementById('global-search-input');
+      const status = document.getElementById('filter-status-select');
+      const sort = document.getElementById('sort-select');
+
+      if (type === 'students') {
+        search.value = '';
+        status.value = 'ALL';
+        sort.value = 'gpa-desc';
+        applyFilters();
+        switchTab('students');
+      } else if (type === 'gpa') {
+        search.value = '';
+        status.value = 'ALL';
+        sort.value = 'gpa-desc';
+        applyFilters();
+        switchTab('students');
+        showToast('Danh sách đã sắp xếp theo CPA giảm dần để đối chiếu kết quả học tập.');
+      } else if (type === 'alerts') {
+        search.value = '';
+        status.value = 'ALL';
+        sort.value = 'gpa-asc';
+        applyFilters();
+        switchTab('alerts');
+      } else if (type === 'credits') {
+        search.value = '';
+        status.value = 'ALL';
+        sort.value = 'credits-desc';
+        applyFilters();
+        switchTab('students');
+        showToast('Danh sách đã sắp xếp theo số tín chỉ hoàn thành từ cao xuống thấp.');
+      }
+    }
+
+    // CRUD SINH VIÊN: thêm, sửa, xóa và lưu cục bộ.
+    let editingStudentId = null;
+
+    function openStudentModal() {
+      editingStudentId = null;
+      document.getElementById('student-form').reset();
+      document.getElementById('student-form-id').disabled = false;
+      document.getElementById('student-form-class').value = 'D21HTTT01';
+      document.getElementById('student-form-cpa').value = '2.50';
+      document.getElementById('student-form-gpa').value = '2.50';
+      document.getElementById('student-form-prev-gpa').value = '2.50';
+      document.getElementById('student-form-credits').value = '0';
+      document.getElementById('student-form-debt').value = '0';
+      document.getElementById('student-modal-title').textContent = 'Thêm sinh viên mới';
+      document.getElementById('student-form-submit').textContent = 'Lưu sinh viên';
+      document.getElementById('student-modal').classList.add('active');
+      if (window.lucide) lucide.createIcons();
+      document.getElementById('student-form-id').focus();
+    }
+
+    function editStudent(studentId) {
+      const s = students.find(item => String(item.id) === String(studentId));
+      if (!s) return showToast('Không tìm thấy sinh viên.');
+      editingStudentId = String(s.id);
+      document.getElementById('student-form').reset();
+      document.getElementById('student-form-id').value = s.id;
+      document.getElementById('student-form-id').disabled = true;
+      document.getElementById('student-form-name').value = s.name || '';
+      document.getElementById('student-form-class').value = s.classCode || 'D21HTTT01';
+      document.getElementById('student-form-email').value = s.email || '';
+      document.getElementById('student-form-phone').value = s.phone || '';
+      document.getElementById('student-form-cpa').value = Number(s.cpa) || 0;
+      document.getElementById('student-form-gpa').value = Number(s.gpaHK) || 0;
+      document.getElementById('student-form-prev-gpa').value = Number(s.prevGpa) || 0;
+      document.getElementById('student-form-credits').value = Number(s.accumulatedCredits) || 0;
+      document.getElementById('student-form-debt').value = Number(s.debtCredits) || 0;
+      document.getElementById('student-modal-title').textContent = 'Cập nhật thông tin sinh viên';
+      document.getElementById('student-form-submit').textContent = 'Lưu thay đổi';
+      document.getElementById('student-modal').classList.add('active');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function saveStudentForm(event) {
+      event.preventDefault();
+      const id = document.getElementById('student-form-id').value.trim();
+      const name = document.getElementById('student-form-name').value.trim();
+      const classCode = document.getElementById('student-form-class').value.trim();
+      const email = document.getElementById('student-form-email').value.trim();
+      const phone = document.getElementById('student-form-phone').value.trim();
+      const cpa = Number(document.getElementById('student-form-cpa').value);
+      const gpaHK = Number(document.getElementById('student-form-gpa').value);
+      const prevGpa = Number(document.getElementById('student-form-prev-gpa').value || 0);
+      const accumulatedCredits = Number(document.getElementById('student-form-credits').value);
+      const debtCredits = Number(document.getElementById('student-form-debt').value);
+
+      if (!id || !name || !classCode || !email) {
+        showToast('Vui lòng điền đầy đủ thông tin bắt buộc.');
+        return;
+      }
+      if (![cpa, gpaHK, prevGpa].every(n => Number.isFinite(n) && n >= 0 && n <= 4)) {
+        showToast('GPA/CPA phải nằm trong khoảng từ 0 đến 4.');
+        return;
+      }
+      if (![accumulatedCredits, debtCredits].every(n => Number.isInteger(n) && n >= 0)) {
+        showToast('Số tín chỉ phải là số nguyên không âm.');
+        return;
+      }
+      if (accumulatedCredits > 300 || debtCredits > 300) {
+        showToast('Số tín chỉ không được vượt quá 300.');
+        return;
+      }
+
+      const duplicate = students.some(s => String(s.id).toLowerCase() === id.toLowerCase()
+        && String(s.id) !== String(editingStudentId));
+      if (duplicate) {
+        showToast('MSSV đã tồn tại. Vui lòng kiểm tra lại.');
+        document.getElementById('student-form-id').focus();
+        return;
+      }
+
+      const wasEditing = Boolean(editingStudentId);
+      let student;
+      if (editingStudentId) {
+        student = students.find(s => String(s.id) === editingStudentId);
+        if (!student) return showToast('Không tìm thấy sinh viên cần sửa.');
+        Object.assign(student, { name, classCode, email, phone, cpa, gpaHK, prevGpa, accumulatedCredits, debtCredits });
+      } else {
+        student = {
+          id, name, classCode, email, phone, cpa, gpaHK, prevGpa,
+          accumulatedCredits, debtCredits,
+          failedCoursesCount: debtCredits > 0 ? 1 : 0,
+          status: 'NORMAL',
+          statusLabel: 'Đạt chuẩn',
+          reasons: [],
+          lastAdvising: 'Chưa tư vấn',
+          advisingNote: 'Chưa có ghi chú',
+          courses: [],
+          advisingHistory: []
+        };
+        students.push(student);
+      }
+
+      // Cập nhật trạng thái cảnh báo theo quy tắc demo.
+      evaluateStudentAlerts(student);
+      selectedStudent = student;
+      if (!saveStudents()) return;
+      closeStudentModal();
+      refreshAllViews();
+      applyFilters();
+      showToast(wasEditing ? 'Đã cập nhật thông tin sinh viên.' : 'Đã thêm sinh viên mới.');
+      editingStudentId = null;
+    }
+
+    async function deleteStudent(studentId) {
+      const s = students.find(item => String(item.id) === String(studentId));
+      if (!s) return showToast('Không tìm thấy sinh viên.');
+      const confirmed = window.confirm(`Bạn có chắc muốn xóa sinh viên ${s.name} (${s.id})? Thao tác này sẽ xóa cả lịch sử tư vấn của sinh viên khỏi dữ liệu trên trình duyệt.`);
+      if (!confirmed) return;
+      try {
+        const response = await fetch(`/api/students/${encodeURIComponent(studentId)}`, { method: 'DELETE' });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Không xóa được sinh viên trên máy chủ.');
+      } catch (e) { showToast(e.message); return; }
+      students = students.filter(item => String(item.id) !== String(studentId));
+      if (selectedStudent && String(selectedStudent.id) === String(studentId)) {
+        selectedStudent = students[0] || null;
+      }
+      if (!saveStudents()) return;
+      refreshAllViews();
+      showToast('Đã xóa sinh viên khỏi hệ thống.');
+    }
+
+    function closeStudentModal() {
+      document.getElementById('student-modal').classList.remove('active');
+      document.getElementById('student-form').reset();
+      document.getElementById('student-form-id').disabled = false;
+      editingStudentId = null;
+    }
+
+    function closeStudentModalOnOutside(event) {
+      if (event.target.id === 'student-modal') closeStudentModal();
+    }
+
+    // 2. TAB SWITCHING
+    function switchTab(tabId) {
+      document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active-view'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+      const targetView = document.getElementById('view-' + tabId);
+      if (targetView) targetView.classList.add('active-view');
+
+      // Highlight active sidebar button (grades.html là trang riêng, không thuộc tab nội bộ).
+      const navButtons = document.querySelectorAll('.nav-btn');
+      if (tabId === 'dashboard') navButtons[0]?.classList.add('active');
+      else if (tabId === 'students') navButtons[1]?.classList.add('active');
+      else if (tabId === 'roadmap') navButtons[3]?.classList.add('active');
+      else if (tabId === 'alerts') navButtons[4]?.classList.add('active');
+      else if (tabId === 'detail') navButtons[5]?.classList.add('active');
+
+      if (tabId === 'detail' && selectedStudent) {
+        renderStudentDetail(selectedStudent);
+      }
+      if (tabId === 'roadmap') {
+        renderRoadmap();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 3. RENDER TABLE & DATA
+    function renderStudentsTable(data) {
+      const tbody = document.getElementById('student-table-body');
+      tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 36px; color: #94a3b8;">Không tìm thấy sinh viên nào khớp với bộ lọc!</td></tr>`;
+        return;
+      }
+
+      data.forEach(s => {
+        let badgeClass = "badge-info";
+        if (s.status === 'CRITICAL') badgeClass = "badge-critical";
+        else if (s.status === 'WARNING') badgeClass = "badge-warning";
+        else if (s.status === 'GOOD') badgeClass = "badge-success";
+
+        const percent = Math.min(100, Math.round((s.accumulatedCredits / 140) * 100));
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div style="font-weight: 700; color: #0f172a;">${s.name}</div>
+            <div style="font-size: 11.5px; color: #64748b;">${s.id} • ${s.email}</div>
+          </td>
+          <td>
+            <span class="badge ${badgeClass}">${s.statusLabel}</span>
+          </td>
+          <td style="font-weight: 800; color: ${s.cpa < 2.0 ? '#dc2626' : '#0f172a'};">${s.cpa}</td>
+          <td style="font-weight: 800; color: ${s.gpaHK < 2.0 ? '#dc2626' : '#0f172a'};">${s.gpaHK}</td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 70px; height: 6px; background: #e2e8f0; border-radius: 99px; overflow: hidden;">
+                <div style="width: ${percent}%; height: 100%; background: var(--primary);"></div>
+              </div>
+              <span style="font-size: 11.5px; color: #64748b;">${s.accumulatedCredits}/140</span>
+            </div>
+          </td>
+          <td>
+            <div style="font-weight: 800; color: ${(Number(s.failedCoursesCount) || 0) > 0 ? '#dc2626' : '#16a34a'};">${s.gradeDataLoaded === false ? 'Chưa tải' : (Number(s.failedCoursesCount) || 0) + ' môn còn nợ'}</div>
+            <div style="font-size:11px;color:#64748b;margin-top:3px;">Từng trượt: ${Number(s.everFailedCoursesCount) || 0} môn</div>
+            <div style="font-size:11px;color:#64748b;">${Number(s.debtCredits) || 0} TC nợ</div>
+          </td>
+          <td>
+<div style="font-weight: 600; font-size: 12px; color: #334155;">${s.lastAdvising}</div>
+            <div style="font-size: 11px; color: #94a3b8; max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.advisingNote}</div>
+          </td>
+          <td style="text-align: right; white-space: nowrap;">
+            <button class="btn btn-outline btn-sm" onclick="viewStudentDetail('${s.id}')">Xem hồ sơ</button>
+            <button class="btn btn-outline btn-sm" onclick="editStudent('${s.id}')" title="Sửa thông tin">Sửa</button>
+            <button class="btn btn-outline btn-sm" onclick="deleteStudent('${s.id}')" title="Xóa sinh viên" style="color:#dc2626;">Xóa</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('student-count-summary').innerText = `Hiển thị ${data.length} / ${students.length} sinh viên`;
+    }
+
+    // 4. RENDER DASHBOARD URGENT LIST
+    function renderDashboardUrgent() {
+      const container = document.getElementById('dashboard-urgent-list');
+      const urgentStudents = students.filter(s => s.status === 'CRITICAL' || s.status === 'WARNING');
+      
+      container.innerHTML = '';
+      if (!urgentStudents.length) {
+        container.innerHTML = '<div style="padding:22px;color:#64748b;text-align:center;">Hiện không có sinh viên thuộc diện cảnh báo.</div>';
+      }
+      urgentStudents.forEach(s => {
+        const item = document.createElement('div');
+        item.style.padding = '16px 22px';
+        item.style.borderBottom = '1px solid #f1f5f9';
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        item.style.alignItems = 'center';
+        item.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 42px; height: 42px; background: #fee2e2; color: #dc2626; border-radius: 50%; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+              ${s.name.split(' ').pop()}
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-weight: 700; color: #0f172a;">${s.name} (${s.id})</span>
+                <span class="badge ${s.status === 'CRITICAL' ? 'badge-critical' : 'badge-warning'}">${s.statusLabel}</span>
+              </div>
+              <div style="font-size: 12px; color: #dc2626; margin-top: 3px;">
+                ${s.reasons.join(' • ')}
+              </div>
+              <div style="font-size:11px;color:#64748b;margin-top:5px;">
+                Môn còn nợ: <strong>${Number(s.failedCoursesCount) || 0}</strong> • Từng trượt: <strong>${Number(s.everFailedCoursesCount) || 0}</strong>
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="text-align: right;">
+              <div style="font-size: 14px; font-weight: 800; color: #0f172a;">GPA HK: ${s.gpaHK}</div>
+              <div style="font-size: 11.5px; color: #64748b;">CPA: ${s.cpa}</div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="viewStudentDetail('${s.id}')">Chi tiết hồ sơ</button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    // 5. RENDER ALERTS VIEW
+    function renderAlertsView() {
+      const container = document.getElementById('alerts-cards-list');
+      const urgentStudents = students.filter(s => Array.isArray(s.reasons) && s.reasons.length > 0);
+      const level2Count = urgentStudents.filter(s => s.status === 'CRITICAL').length;
+      const level1Count = urgentStudents.filter(s => s.status === 'WARNING').length;
+      const heading = container ? container.previousElementSibling : null;
+      if (heading) heading.textContent = `Danh Sách Ca Cảnh Báo Cần Xử Lý (${level2Count} Mức 2 • ${level1Count} Mức 1)`;
+      container.innerHTML = '';
+      if (!urgentStudents.length) {
+        container.innerHTML = '<div style="padding:22px;background:#fff;border:1px solid var(--border);border-radius:12px;color:#64748b;">Chưa có ca cảnh báo cần xử lý.</div>';
+      }
+
+      urgentStudents.forEach(s => {
+        const card = document.createElement('div');
+card.style.background = 'white';
+        card.style.border = s.status === 'CRITICAL' ? '1px solid #fecaca' : '1px solid #fed7aa';
+        card.style.borderLeft = s.status === 'CRITICAL' ? '5px solid #dc2626' : '5px solid #d97706';
+        card.style.borderRadius = '12px';
+        card.style.padding = '18px';
+        card.style.boxShadow = 'var(--shadow-sm)';
+
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h4 style="font-size: 15px; font-weight: 800; color: #0f172a;">${s.name} (${s.id})</h4>
+                <span class="badge ${s.status === 'CRITICAL' ? 'badge-critical' : 'badge-warning'}">${s.statusLabel}</span>
+              </div>
+              <ul style="margin-top: 10px; padding-left: 18px; font-size: 12.5px; color: #b91c1c; display: flex; flex-direction: column; gap: 4px;">
+                ${s.reasons.map(r => `<li>${r}</li>`).join('')}
+              </ul>
+              <div style="display: flex; gap: 14px; margin-top: 12px; font-size: 12px; color: #64748b;">
+                <span>GPA HK: <strong style="color: #0f172a;">${s.gpaHK}</strong></span>
+                <span>Tích lũy: <strong style="color: #0f172a;">${s.cpa}</strong></span>
+                <span>Môn còn nợ: <strong style="color: ${(Number(s.failedCoursesCount) || 0) > 0 ? '#dc2626' : '#16a34a'};">${Number(s.failedCoursesCount) || 0}</strong></span>
+                <span>Từng trượt: <strong style="color: #d97706;">${Number(s.everFailedCoursesCount) || 0}</strong></span>
+                <span>Nợ tín chỉ: <strong style="color: #dc2626;">${Number(s.debtCredits) || 0} TC</strong></span>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button class="btn btn-primary btn-sm" onclick="viewStudentDetail('${s.id}')">Xem học bạ</button>
+              <button class="btn btn-outline btn-sm" onclick="prefillAdvising('${s.id}')">Ghi tư vấn</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 6. RENDER STUDENT DETAIL
+    function viewStudentDetail(id) {
+      const found = students.find(s => s.id === id);
+      if (found) {
+        selectedStudent = found;
+        switchTab('detail');
+      }
+    }
+
+    function renderStudentDetail(s) {
+      document.getElementById('detail-avatar').innerText = s.name.split(' ').pop();
+      document.getElementById('detail-name').innerText = s.name;
+      document.getElementById('detail-id').innerText = s.id;
+      document.getElementById('detail-email').innerText = s.email;
+      document.getElementById('detail-phone').innerText = s.phone;
+      document.getElementById('detail-cpa').innerText = s.cpa;
+      document.getElementById('detail-credits').innerHTML = `${s.accumulatedCredits} <span style="font-size: 14px; color: #64748b;">/140</span>`;
+      document.getElementById('detail-debt').innerHTML = `${Number(s.failedCoursesCount) || 0} <span style="font-size: 14px; color: #64748b;">môn</span>`;
+      const detailEverFailed = document.getElementById('detail-ever-failed');
+      if (detailEverFailed) detailEverFailed.textContent = `Từng trượt: ${Number(s.everFailedCoursesCount) || 0} môn • Học lại đạt: ${Number(s.retakenCoursesCount) || 0} môn`;
+
+      const badge = document.getElementById('detail-status-badge');
+      badge.innerText = s.statusLabel;
+badge.className = `badge ${s.status === 'CRITICAL' ? 'badge-critical' : s.status === 'WARNING' ? 'badge-warning' : 'badge-success'}`;
+
+      // Render courses: these are the latest attempts per course from MySQL.
+      const courseTbody = document.getElementById('detail-courses-body');
+      courseTbody.innerHTML = '';
+      const detailCourseTitle = document.getElementById('detail-course-table-title');
+      const detailCourseSubtitle = document.getElementById('detail-course-table-subtitle');
+      if (detailCourseTitle) detailCourseTitle.textContent = 'Kết quả học phần theo lần học mới nhất';
+      if (detailCourseSubtitle) {
+        const latestCourseCredits = (s.courses || []).reduce((sum, course) => sum + (Number(course.tc) || 0), 0);
+        detailCourseSubtitle.textContent = `${(s.courses || []).length} môn • ${latestCourseCredits} tín chỉ`;
+      }
+      s.courses.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.style.background = c.pass ? 'transparent' : '#fef2f2';
+        tr.innerHTML = `
+          <td style="font-weight: 600; color: #0f172a;">${c.name} <span style="font-size: 11px; color: #64748b;">(${c.code})</span></td>
+          <td>${c.tc}</td>
+          <td>${c.p1}</td>
+          <td>${c.p2}</td>
+          <td style="font-weight: 800; color: ${c.pass ? '#0f172a' : '#dc2626'};">${c.total}</td>
+          <td style="font-weight: 800; color: ${c.pass ? '#0f172a' : '#dc2626'};">${c.letter}</td>
+          <td>
+            <span class="badge ${c.pass ? 'badge-success' : 'badge-critical'}">${c.pass ? 'Đạt' : 'Trượt'}</span>
+          </td>
+        `;
+        courseTbody.appendChild(tr);
+      });
+
+      // Hien thi cac mon con no hien tai va lich su hoc lai tu bang course_grades.
+      const courseStatusContainer = document.getElementById('detail-course-debt-history');
+      const courseStatusCount = document.getElementById('detail-course-status-count');
+      if (courseStatusContainer) {
+        const currentDebts = Array.isArray(s.currentDebtCourses) ? s.currentDebtCourses : [];
+        const retakeHistory = Array.isArray(s.courseAttemptHistory) ? s.courseAttemptHistory : [];
+        if (courseStatusCount) {
+          courseStatusCount.textContent = s.gradeDataLoaded === false
+            ? 'Không tải được bảng điểm'
+            : `${currentDebts.length} môn còn nợ • ${Number(s.everFailedCoursesCount) || 0} môn từng trượt`;
+        }
+
+        if (s.gradeDataLoaded === false) {
+          courseStatusContainer.innerHTML = `<p style="color:#b91c1c;font-size:13px;">${escapeRoadmapHtml(s.gradeDataError || 'Không lấy được bảng điểm từ máy chủ. Kiểm tra API /api/students/:id/grades.')}</p>`;
+        } else {
+          let statusHtml = '';
+          if (currentDebts.length) {
+            statusHtml += `<h4 style="font-size:13px;font-weight:800;color:#b91c1c;margin-bottom:10px;">Các môn hiện còn nợ</h4>`;
+            statusHtml += currentDebts.map(course => `
+              <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 12px;margin-bottom:8px;background:#fef2f2;border:1px solid #fecaca;border-radius:9px;">
+                <div><strong style="font-size:13px;color:#0f172a;">${escapeRoadmapHtml(course.name)}</strong><div style="font-size:11px;color:#64748b;">${escapeRoadmapHtml(course.code)} • ${Number(course.tc) || 0} tín chỉ • ${escapeRoadmapHtml(course.semester || '')}</div></div>
+                <strong style="color:#dc2626;white-space:nowrap;">${Number(course.total).toFixed(2)} điểm</strong>
+              </div>`).join('');
+            statusHtml += `<p style="font-size:12px;color:#64748b;margin:4px 0 16px;">Tổng tín chỉ còn nợ: <strong style="color:#dc2626;">${Number(s.debtCredits) || 0} TC</strong></p>`;
+          } else {
+            statusHtml += `<div style="padding:12px;margin-bottom:16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;color:#166534;font-size:13px;"><strong>Không có môn còn nợ</strong><div style="font-size:12px;margin-top:3px;">Tất cả môn có điểm trong dữ liệu đều đạt ở lần học mới nhất.</div></div>`;
+          }
+
+          if (retakeHistory.length) {
+            statusHtml += `<h4 style="font-size:13px;font-weight:800;color:#92400e;margin:6px 0 10px;">Lịch sử môn từng trượt</h4>`;
+            statusHtml += retakeHistory.map(course => {
+              const attemptText = course.attempts.map(attempt => `${escapeRoadmapHtml(attempt.semester)}: ${Number(attempt.totalScore).toFixed(2)} (${attempt.pass ? 'Đạt' : 'Trượt'})`).join(' → ');
+              return `<div style="padding:11px 12px;margin-bottom:8px;background:#fffbeb;border:1px solid #fde68a;border-radius:9px;">
+                <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;"><strong style="font-size:13px;color:#0f172a;">${escapeRoadmapHtml(course.name)}</strong><span class="badge ${course.latestPass ? 'badge-success' : 'badge-critical'}">${course.latestPass ? 'Đã học lại đạt' : 'Còn nợ'}</span></div>
+                <div style="font-size:11.5px;color:#64748b;margin-top:5px;">${escapeRoadmapHtml(course.code)} • ${Number(course.credits) || 0} tín chỉ</div>
+                <div style="font-size:12px;color:#92400e;margin-top:5px;">${attemptText}</div>
+              </div>`;
+            }).join('');
+          } else {
+            statusHtml += `<p style="font-size:12px;color:#64748b;">Chưa ghi nhận môn nào từng trượt trong lịch sử điểm.</p>`;
+          }
+          courseStatusContainer.innerHTML = statusHtml;
+        }
+      }
+
+      // Render history
+      const historyContainer = document.getElementById('detail-advising-timeline');
+      document.getElementById('detail-history-count').innerText = `${s.advisingHistory.length} buổi`;
+      historyContainer.innerHTML = '';
+
+      if (s.advisingHistory.length === 0) {
+        historyContainer.innerHTML = `<p style="font-size: 13px; color: #94a3b8; text-align: center; padding: 20px;">Chưa có buổi tư vấn nào được ghi nhận.</p>`;
+      } else {
+        s.advisingHistory.forEach((h, index) => {
+          const item = document.createElement('div');
+          item.style.padding = '12px 14px';
+          item.style.background = '#f8fafc';
+          item.style.border = '1px solid var(--border)';
+          item.style.borderRadius = '10px';
+          item.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <span style="font-weight: 700; font-size: 13px; color: #0f172a;">${h.title}</span>
+              <span style="font-size: 11px; color: #64748b; font-weight: 600;">${h.date}</span>
+            </div>
+            <p style="font-size: 12.5px; color: #475569; margin-bottom: 6px;">${h.content}</p>
+            <div style="font-size: 11px; color: var(--primary); font-weight: 600;">✓ ${h.note}</div>
+          `;
+          historyContainer.appendChild(item);
+        });
+      }
+    }
+
+
+    // 6A. LỘ TRÌNH HỌC TẬP
+    // Lộ trình được ước tính từ dữ liệu hiện có của sinh viên.
+    // Mỗi học kỳ dự kiến tối đa 18 tín chỉ; cố gắng ưu tiên tín chỉ/môn đang nợ.
+    // Đây là kế hoạch tham khảo, cần CVHT đối chiếu tiên quyết và lịch mở lớp thực tế.
+    function escapeRoadmapHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[char]);
+    }
+
+    function buildStudentRoadmap(student) {
+      const targetCredits = 140;
+      const accumulated = Math.max(0, Number(student.accumulatedCredits) || 0);
+      const completed = Math.min(targetCredits, accumulated);
+      const remaining = Math.max(0, targetCredits - completed);
+      const debt = Math.min(remaining, Math.max(0, Number(student.debtCredits) || 0));
+
+      const failedCourses = (student.courses || []).filter(course =>
+        course.pass === false ||
+        course.pass === 0 ||
+        course.pass === '0' ||
+        String(course.result || course.status || '').toLowerCase().includes('trượt') ||
+        String(course.letter || '').toUpperCase().startsWith('F')
+      );
+
+      const terms = [];
+      let remainingCredits = remaining;
+      let remainingDebt = debt;
+      let termIndex = 1;
+
+      while (remainingCredits > 0 && termIndex <= 10) {
+        const plannedCredits = Math.min(18, remainingCredits);
+        const retakeCredits = Math.min(remainingDebt, plannedCredits);
+        const newCredits = plannedCredits - retakeCredits;
+
+        terms.push({
+          index: termIndex,
+          title: termIndex === 1 ? 'Học kỳ kế tiếp' : `Học kỳ tiếp theo ${termIndex}`,
+          plannedCredits,
+          retakeCredits,
+          newCredits
+        });
+
+        remainingCredits -= plannedCredits;
+        remainingDebt -= retakeCredits;
+        termIndex++;
+      }
+
+      return {
+        targetCredits,
+        completed,
+        remaining,
+        debt,
+        percentage: Math.round((completed / targetCredits) * 100),
+        failedCourses,
+        terms
+      };
+    }
+
+    function renderRoadmap() {
+      const container = document.getElementById('roadmap-content');
+      const select = document.getElementById('roadmap-student-select');
+      if (!container) return;
+
+      const studentId = select ? select.value : '';
+      const student = students.find(s => String(s.id) === String(studentId));
+
+      if (!students.length) {
+        container.innerHTML = '<div class="roadmap-empty">Chưa có dữ liệu sinh viên. Hãy đăng nhập để tải dữ liệu từ máy chủ.</div>';
+        return;
+      }
+      if (!student) {
+        container.innerHTML = '<div class="roadmap-empty">Vui lòng chọn một sinh viên để hệ thống xây dựng lộ trình học tập.</div>';
+        return;
+      }
+
+      const plan = buildStudentRoadmap(student);
+      const name = escapeRoadmapHtml(student.name);
+      const id = escapeRoadmapHtml(student.id);
+      const gpa = (Number(student.gpaHK) || 0).toFixed(2);
+      const cpa = (Number(student.cpa) || 0).toFixed(2);
+      const debtCourses = plan.failedCourses;
+      const failedCourseNames = debtCourses.map(course =>
+        escapeRoadmapHtml(course.name || course.course_name || course.code || course.course_code || 'Học phần chưa đạt')
+      );
+
+      const termHtml = plan.terms.length
+        ? plan.terms.map((term, index) => {
+            let tasks = '';
+            if (term.retakeCredits > 0) {
+              const retryText = index === 0 && failedCourseNames.length
+                ? `Ưu tiên đăng ký học lại: ${failedCourseNames.join(', ')}.`
+                : 'Ưu tiên đăng ký học lại các học phần còn nợ và kiểm tra điều kiện tiên quyết.';
+              tasks += `<div class="roadmap-task"><i data-lucide="rotate-ccw" style="width:16px;height:16px;"></i><span><strong>Học lại ${term.retakeCredits} tín chỉ:</strong> ${retryText}</span></div>`;
+            }
+            if (term.newCredits > 0) {
+              tasks += `<div class="roadmap-task"><i data-lucide="book-open" style="width:16px;height:16px;"></i><span><strong>Học phần mới ${term.newCredits} tín chỉ:</strong> Chọn các môn đúng tiến độ trong chương trình đào tạo, ưu tiên môn là điều kiện tiên quyết cho học kỳ sau.</span></div>`;
+            }
+            tasks += `<div class="roadmap-task"><i data-lucide="clipboard-check" style="width:16px;height:16px;"></i><span>Đầu học kỳ, kiểm tra lịch mở lớp và điều kiện đăng ký; cuối học kỳ, cập nhật điểm và số tín chỉ tích lũy trên EduAdvisor.</span></div>`;
+
+            return `
+              <article class="roadmap-term">
+                <div class="roadmap-term-head">
+                  <div>
+                    <div class="roadmap-term-title">${term.title}</div>
+                    <div class="roadmap-term-meta">Giai đoạn ${term.index} • Kế hoạch ${term.plannedCredits} tín chỉ</div>
+                  </div>
+                  <span class="badge ${index === 0 ? 'badge-info' : 'badge-success'}">${index === 0 ? 'Ưu tiên thực hiện' : 'Dự kiến'}</span>
+                </div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+                  <span class="badge badge-info">${term.plannedCredits} TC dự kiến</span>
+                  ${term.retakeCredits ? `<span class="badge badge-warning">${term.retakeCredits} TC học lại</span>` : ''}
+                  ${term.newCredits ? `<span class="badge badge-success">${term.newCredits} TC học mới</span>` : ''}
+                </div>
+                ${tasks}
+              </article>
+            `;
+          }).join('')
+        : `<div class="roadmap-empty"><i data-lucide="trophy" style="width:30px;height:30px;color:#16a34a;margin-bottom:10px;"></i><div style="font-weight:800;color:#166534;">Đã đạt mục tiêu 140 tín chỉ</div><p style="font-size:12px;margin-top:5px;">Sinh viên đã hoàn thành số tín chỉ mục tiêu theo dữ liệu hiện tại.</p></div>`;
+
+      let recommendations = '';
+      if (plan.debt > 0) {
+        recommendations += `<div class="roadmap-tip"><i data-lucide="alert-triangle" style="width:16px;height:16px;color:#d97706;flex-shrink:0;"></i><span>Ưu tiên xử lý ${plan.debt} tín chỉ đang nợ trước khi đăng ký quá nhiều học phần mới.</span></div>`;
+      }
+      if (Number(student.gpaHK) < 2) {
+        recommendations += `<div class="roadmap-tip"><i data-lucide="trending-down" style="width:16px;height:16px;color:#dc2626;flex-shrink:0;"></i><span>GPA học kỳ dưới 2.00: nên giảm tải, lập thời khóa biểu tự học và gặp CVHT để có kế hoạch cải thiện.</span></div>`;
+      } else {
+        recommendations += `<div class="roadmap-tip"><i data-lucide="target" style="width:16px;height:16px;color:#16a34a;flex-shrink:0;"></i><span>Duy trì kết quả học tập ổn định; ưu tiên các học phần nền tảng và môn tiên quyết.</span></div>`;
+      }
+      if (plan.failedCourses.length === 0 && plan.debt > 0) {
+        recommendations += `<div class="roadmap-tip"><i data-lucide="info" style="width:16px;height:16px;color:#2563eb;flex-shrink:0;"></i><span>Dữ liệu điểm hiện chưa có tên môn trượt. Hãy kiểm tra học bạ hoặc màn hình Nhập điểm & GPA để xác định chính xác học phần cần học lại.</span></div>`;
+      }
+      recommendations += `<div class="roadmap-tip"><i data-lucide="calendar-check" style="width:16px;height:16px;color:#2563eb;flex-shrink:0;"></i><span>Trao đổi với CVHT trước mỗi đợt đăng ký để xác nhận số tín chỉ được phép học và lịch mở lớp.</span></div>`;
+
+      container.innerHTML = `
+        <div class="card" style="margin-bottom:20px;">
+          <div class="card-body">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+              <div>
+                <div style="font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.4px;">Sinh viên được chọn</div>
+                <h3 style="font-size:18px;font-weight:800;color:#0f172a;margin-top:5px;">${name}</h3>
+                <p style="font-size:12px;color:#64748b;margin-top:3px;">MSSV: ${id} • Lớp: ${escapeRoadmapHtml(student.classCode || 'Chưa cập nhật')}</p>
+              </div>
+              <button class="btn btn-outline btn-sm" type="button" onclick="viewStudentDetail('${id}')">Xem hồ sơ sinh viên</button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:22px;">
+              <span style="font-size:13px;font-weight:700;color:#334155;">Tiến độ hoàn thành chương trình</span>
+              <strong style="font-size:14px;color:var(--primary);">${plan.percentage}%</strong>
+            </div>
+            <div class="roadmap-progress-track"><div class="roadmap-progress-fill" style="width:${plan.percentage}%;"></div></div>
+            <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:#64748b;">
+              <span>${plan.completed} / ${plan.targetCredits} tín chỉ đã tích lũy</span>
+              <span>Còn ${plan.remaining} tín chỉ</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="roadmap-summary-grid">
+          <div class="roadmap-stat">
+            <div class="roadmap-stat-label">Tín chỉ đã đạt</div>
+            <div class="roadmap-stat-value">${plan.completed}<span style="font-size:13px;font-weight:600;color:#64748b;"> / 140</span></div>
+          </div>
+          <div class="roadmap-stat">
+            <div class="roadmap-stat-label">Tín chỉ còn lại</div>
+            <div class="roadmap-stat-value" style="color:${plan.remaining ? '#1e40af' : '#16a34a'};">${plan.remaining}</div>
+          </div>
+          <div class="roadmap-stat">
+            <div class="roadmap-stat-label">Tín chỉ đang nợ</div>
+            <div class="roadmap-stat-value" style="color:${plan.debt ? '#dc2626' : '#16a34a'};">${plan.debt}</div>
+          </div>
+          <div class="roadmap-stat">
+            <div class="roadmap-stat-label">CPA / GPA học kỳ</div>
+            <div class="roadmap-stat-value">${cpa}<span style="font-size:12px;color:#64748b;"> / ${gpa}</span></div>
+          </div>
+        </div>
+
+        <div class="roadmap-layout">
+          <section>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;">
+              <h3 style="font-size:16px;font-weight:800;color:#0f172a;">Kế hoạch theo từng học kỳ</h3>
+              <span style="font-size:11px;color:#64748b;">Tối đa 18 TC / học kỳ (tham khảo)</span>
+            </div>
+            <div class="roadmap-term-list">${termHtml}</div>
+          </section>
+          <aside>
+            <div class="roadmap-side-card">
+              <h4><i data-lucide="lightbulb" style="width:16px;height:16px;vertical-align:middle;color:#d97706;"></i> Khuyến nghị cho sinh viên</h4>
+              ${recommendations}
+            </div>
+            <div class="roadmap-side-card">
+              <h4><i data-lucide="file-text" style="width:16px;height:16px;vertical-align:middle;color:var(--primary);"></i> Cơ sở xây dựng lộ trình</h4>
+              <div class="roadmap-tip"><i data-lucide="check-circle-2" style="width:16px;height:16px;color:#16a34a;flex-shrink:0;"></i><span>Tín chỉ tích lũy hiện tại: ${plan.completed} TC.</span></div>
+              <div class="roadmap-tip"><i data-lucide="check-circle-2" style="width:16px;height:16px;color:#16a34a;flex-shrink:0;"></i><span>Chuẩn đầu ra đang cấu hình: ${plan.targetCredits} TC.</span></div>
+              <div class="roadmap-tip"><i data-lucide="info" style="width:16px;height:16px;color:#2563eb;flex-shrink:0;"></i><span>Ước tính mỗi học kỳ tối đa 18 TC; số môn cụ thể phụ thuộc chương trình đào tạo, tiên quyết và lịch mở lớp.</span></div>
+            </div>
+          </aside>
+        </div>
+      `;
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // 7. FILTER & SEARCH
+    function applyFilters() {
+      renderStudentsTable(getFilteredStudents());
+    }
+
+    function handleSearch(val) {
+      applyFilters();
+    }
+
+    function resetFilters() {
+      document.getElementById('global-search-input').value = '';
+      document.getElementById('filter-status-select').value = 'ALL';
+      document.getElementById('sort-select').value = 'gpa-desc';
+      applyFilters();
+    }
+
+    // 8. ADVISING FORMS & MODAL
+    function populateStudentDropdowns() {
+      const sel1 = document.getElementById('advising-student-select');
+      const sel2 = document.getElementById('modal-student-select');
+      const roadmapSelect = document.getElementById('roadmap-student-select');
+      const previousRoadmapId = roadmapSelect ? roadmapSelect.value : '';
+      sel1.innerHTML = '';
+      sel2.innerHTML = '';
+      if (roadmapSelect) roadmapSelect.innerHTML = '<option value="">Chọn sinh viên</option>';
+
+      students.forEach(s => {
+        const opt1 = document.createElement('option');
+        opt1.value = s.id;
+        opt1.innerText = `${s.id} - ${s.name} (GPA ${s.gpaHK})`;
+        sel1.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = s.id;
+        opt2.innerText = `${s.id} - ${s.name} (GPA ${s.gpaHK})`;
+        sel2.appendChild(opt2);
+
+        if (roadmapSelect) {
+          const opt3 = document.createElement('option');
+          opt3.value = s.id;
+          opt3.innerText = `${s.id} - ${s.name}`;
+          roadmapSelect.appendChild(opt3);
+        }
+      });
+
+      if (roadmapSelect) {
+        const preferredId = students.some(s => String(s.id) === String(previousRoadmapId))
+          ? previousRoadmapId
+          : (selectedStudent ? String(selectedStudent.id) : '');
+        roadmapSelect.value = preferredId;
+      }
+    }
+
+    function prefillAdvising(studentId) {
+      document.getElementById('advising-student-select').value = studentId;
+      document.getElementById('advising-content').focus();
+    }
+
+    async function handleSaveAdvising(e) {
+      e.preventDefault();
+      const studentId = document.getElementById('advising-student-select').value;
+      const content = document.getElementById('advising-content').value;
+      const action = document.getElementById('advising-action').value;
+      const student = students.find(s => s.id === studentId);
+
+      if (student) {
+        try {
+          const response = await fetch('/api/advising', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ student_id: studentId, content, commitment: action, channel: 'Trực tiếp' })
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.message || 'Không lưu được lịch sử tư vấn.');
+        } catch (e) { showToast(e.message); return; }
+        student.advisingHistory.unshift({
+          date: new Date().toLocaleDateString('vi-VN'),
+          title: `Tư vấn ngày ${new Date().toLocaleDateString('vi-VN')}`,
+          content: `${content} - Cam kết: ${action}`,
+          note: document.getElementById('sms-parent-check').checked ? "Đã gửi SMS phụ huynh" : "Lưu nội bộ"
+        });
+        student.lastAdvising = new Date().toLocaleDateString('vi-VN');
+        student.advisingNote = "Đã cập nhật cam kết";
+
+        saveStudents();
+        refreshAllViews();
+
+        document.getElementById('advising-content').value = '';
+        document.getElementById('advising-action').value = '';
+        showToast(`Đã lưu biên bản tư vấn cho sinh viên ${student.name}!`);
+      }
+    }
+
+    function openAdvisingModal() {
+      if (selectedStudent) document.getElementById('modal-student-select').value = selectedStudent.id;
+      document.getElementById('advising-modal').classList.add('active');
+    }
+    function closeAdvisingModal() {
+      document.getElementById('advising-modal').classList.remove('active');
+    }
+    function closeModalOnOutside(e) {
+      if (e.target.id === 'advising-modal') closeAdvisingModal();
+    }
+
+    async function handleModalSaveAdvising(e) {
+      e.preventDefault();
+      const studentId = document.getElementById('modal-student-select').value;
+      const content = document.getElementById('modal-content').value;
+      const action = document.getElementById('modal-action').value;
+      const student = students.find(s => s.id === studentId);
+
+      if (student) {
+        try {
+          const response = await fetch('/api/advising', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ student_id: studentId, content, commitment: action, channel: 'Trực tiếp' })
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.message || 'Không lưu được lịch sử tư vấn.');
+        } catch (e) { showToast(e.message); return; }
+        student.advisingHistory.unshift({
+          date: new Date().toLocaleDateString('vi-VN'),
+          title: `Tư vấn ngày ${new Date().toLocaleDateString('vi-VN')}`,
+          content: `${content} - Cam kết: ${action}`,
+          note: "Gặp trực tiếp văn phòng"
+        });
+        student.lastAdvising = new Date().toLocaleDateString('vi-VN');
+        student.advisingNote = "Đã ghi nhận cam kết mới";
+
+        saveStudents();
+        refreshAllViews();
+
+        closeAdvisingModal();
+        document.getElementById('modal-content').value = '';
+        document.getElementById('modal-action').value = '';
+        showToast(`Đã ghi nhận nhật ký tư vấn cho ${student.name}!`);
+      }
+    }
+
+    // 9. EXPORT & PRINT HELPERS
+    function exportDataExcel() {
+      const choice = window.prompt(
+        "Bạn muốn lọc nhóm sinh viên nào để xuất CSV?\n\n" +
+        "1. Cảnh báo Mức 1 và Mức 2\n" +
+        "2. Sinh viên tốt (Giỏi / Xuất sắc)\n" +
+        "3. Tất cả sinh viên\n\n" +
+        "Nhập 1, 2 hoặc 3:",
+        "1"
+      );
+
+      if (choice === null) {
+        showToast("Đã hủy xuất CSV.");
+        return;
+      }
+
+      const exportOptions = {
+        "1": {
+          filter: s => ["Cảnh báo Mức 1", "Cảnh báo Mức 2"].includes((s.statusLabel || "").trim()),
+          filename: "Canh_Bao_Muc_1_2.csv",
+          label: "Cảnh báo Mức 1 và Mức 2"
+        },
+        "2": {
+          filter: s => ["Giỏi", "Xuất sắc"].includes((s.statusLabel || "").trim()),
+          filename: "Sinh_Vien_Tot_Gioi_Xuat_Sac.csv",
+          label: "sinh viên tốt (Giỏi / Xuất sắc)"
+        },
+        "3": {
+          filter: () => true,
+          filename: "Danh_Sach_Lop_D21HTTT01.csv",
+          label: "tất cả sinh viên"
+        }
+      };
+
+      const option = exportOptions[String(choice).trim()];
+      if (!option) {
+        showToast("Lựa chọn không hợp lệ. Vui lòng chọn 1, 2 hoặc 3.");
+        return;
+      }
+
+      const exportStudents = students.filter(option.filter);
+      if (exportStudents.length === 0) {
+        showToast(`Không có ${option.label} để xuất CSV.`);
+        return;
+      }
+
+      const escapeCsv = value => `"${String(value ?? "").replace(/"/g, '""')}"`;
+      let csv = "\uFEFFMã Sinh Viên,Họ và Tên,Lớp,CPA Tích Lũy,GPA Học Kỳ,Tín Chỉ Đạt,Số Môn Nợ,Tình Trạng\n";
+      exportStudents.forEach(s => {
+        csv += [
+          s.id, s.name, s.classCode, s.cpa, s.gpaHK,
+          s.accumulatedCredits, s.failedCoursesCount, s.statusLabel
+        ].map(escapeCsv).join(",") + "\n";
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = option.filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast(`Đã xuất ${exportStudents.length} ${option.label}!`);
+    }
+
+    function printStudentReport() {
+      window.print();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = msg;
+      toast.style.display = 'flex';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // 10. INITIALIZE CHARTS (Chart.js)
+    function initCharts() {
+      // Donut Chart: Phân bố học lực
+      const ctxDist = document.getElementById('chart-distribution').getContext('2d');
+      distributionChart = new Chart(ctxDist, {
+        type: 'doughnut',
+        data: {
+          labels: ['Xuất sắc (≥3.6)', 'Giỏi (3.2 - 3.59)', 'Khá (2.5 - 3.19)', 'Trung bình (2.0 - 2.49)', 'Yếu/Kém (<2.0)'],
+          datasets: [{
+            data: [4, 12, 22, 7, 3],
+backgroundColor: ['#2563eb', '#3b82f6', '#93c5fd', '#cbd5e1', '#ef4444'],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: { boxWidth: 12, font: { family: 'Plus Jakarta Sans', size: 11 } }
+            }
+          },
+          cutout: '68%'
+        }
+      });
+
+      // Line Chart: Xu hướng điểm 4 kỳ
+      const ctxLine = document.getElementById('chart-timeline').getContext('2d');
+      timelineChart = new Chart(ctxLine, {
+        type: 'line',
+        data: {
+          labels: ['HK1 (21-22)', 'HK2 (21-22)', 'HK1 (22-23)', 'HK1 (23-24)'],
+          datasets: [{
+            label: 'GPA Bình quân lớp',
+            data: [2.65, 2.74, 2.78, 2.82],
+            borderColor: '#1e40af',
+            backgroundColor: 'rgba(30, 64, 175, 0.08)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#1e40af',
+            pointRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { min: 2.0, max: 3.5, grid: { color: '#f1f5f9' }, ticks: { stepSize: 0.5 } },
+            x: { grid: { display: false } }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    // Nhấn Escape để đóng các hộp thoại.
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closeAdvisingModal();
+        closePasswordModal();
+        closeStudentModal();
+      }
+    });
+
+    // DOM Ready Bootstrap - giao dien goc duoc giu nguyen, du lieu nap tu MySQL.
+    window.addEventListener('DOMContentLoaded', async () => {
+      lucide.createIcons();
+      initCharts();
+      try {
+        const authResponse = await fetch('/api/auth/me');
+        const auth = await authResponse.json();
+        if (auth.authenticated) {
+          document.getElementById('login-screen').style.display = 'none';
+          await refreshFromServer();
+        } else {
+          document.getElementById('login-screen').style.display = 'flex';
+          students = []; selectedStudent = null;
+          refreshAllViews();
+        }
+      } catch (error) {
+        document.getElementById('login-screen').style.display = 'flex';
+        showToast('Không kết nối được máy chủ EduAdvisor. Hãy kiểm tra backend.');
+      }
+      const alertCount = students.filter(s => s.reasons && s.reasons.length).length;
+      const badge = document.getElementById('sidebar-alert-badge');
+      if (badge) badge.textContent = alertCount;
+    });
+  </script>
+</body>
+</html>

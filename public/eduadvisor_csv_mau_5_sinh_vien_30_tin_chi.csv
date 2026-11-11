@@ -1,0 +1,51 @@
+﻿student_id,student_name,class_code,email,phone,semester,course_code,course_name,credits,attendance,midterm,final
+SV001,Nguyễn Văn An,CNPM01,sv001@example.com,0900000001,HK1_2026,IT101,Nhập môn lập trình,3,8.5,8.0,8.5
+SV001,Nguyễn Văn An,CNPM01,sv001@example.com,0900000001,HK1_2026,IT102,Cơ sở dữ liệu,3,8.0,7.5,8.0
+SV001,Nguyễn Văn An,CNPM01,sv001@example.com,0900000001,HK1_2026,IT103,Cấu trúc dữ liệu và giải thuật,3,7.5,7.0,7.5
+SV001,Nguyễn Văn An,CNPM01,sv001@example.com,0900000001,HK1_2026,IT104,Lập trình hướng đối tượng,3,9.0,8.5,9.0
+SV001,Nguyễn Văn An,CNPM01,sv001@example.com,0900000001,HK1_2026,IT105,Phân tích và thiết kế hệ thống,3,8.0,8.0,8.5
+SV001,Nguyễn Văn An,CNPM01,sv001@example.com,0900000001,HK1_2026,IT106,Kiểm thử phần mềm,3,8.5,7.5,8.0
+SV001,Nguyễn Văn An,CNPM01,sv001@example.com,0900000001,HK1_2026,IT107,Phát triển ứng dụng web,3,7.0,7.5,8.0
+SV001,Nguyễn Văn An,CNPM01,sv001@example.com,0900000001,HK1_2026,IT108,Mạng máy tính,3,8.0,7.0,7.5
+SV001,Nguyễn Văn An,CNPM01,sv001@example.com,0900000001,HK1_2026,IT109,Công nghệ phần mềm,3,8.5,8.0,8.0
+SV001,Nguyễn Văn An,CNPM01,sv001@example.com,0900000001,HK1_2026,IT110,Đảm bảo chất lượng phần mềm,3,7.5,8.0,8.5
+SV002,Trần Thị Bình,CNPM01,sv002@example.com,0900000002,HK1_2026,IT101,Nhập môn lập trình,3,8.1,7.6,8.1
+SV002,Trần Thị Bình,CNPM01,sv002@example.com,0900000002,HK1_2026,IT102,Cơ sở dữ liệu,3,7.6,7.1,7.6
+SV002,Trần Thị Bình,CNPM01,sv002@example.com,0900000002,HK1_2026,IT103,Cấu trúc dữ liệu và giải thuật,3,7.1,6.6,7.1
+SV002,Trần Thị Bình,CNPM01,sv002@example.com,0900000002,HK1_2026,IT104,Lập trình hướng đối tượng,3,8.6,8.1,8.6
+SV002,Trần Thị Bình,CNPM01,sv002@example.com,0900000002,HK1_2026,IT105,Phân tích và thiết kế hệ thống,3,7.6,7.6,8.1
+SV002,Trần Thị Bình,CNPM01,sv002@example.com,0900000002,HK1_2026,IT106,Kiểm thử phần mềm,3,8.1,7.1,7.6
+SV002,Trần Thị Bình,CNPM01,sv002@example.com,0900000002,HK1_2026,IT107,Phát triển ứng dụng web,3,6.6,7.1,7.6
+SV002,Trần Thị Bình,CNPM01,sv002@example.com,0900000002,HK1_2026,IT108,Mạng máy tính,3,7.6,6.6,7.1
+SV002,Trần Thị Bình,CNPM01,sv002@example.com,0900000002,HK1_2026,IT109,Công nghệ phần mềm,3,8.1,7.6,7.6
+SV002,Trần Thị Bình,CNPM01,sv002@example.com,0900000002,HK1_2026,IT110,Đảm bảo chất lượng phần mềm,3,7.1,7.6,8.1
+SV003,Lê Hoàng Nam,CNPM01,sv003@example.com,0900000003,HK1_2026,IT101,Nhập môn lập trình,3,8.8,8.3,8.8
+SV003,Lê Hoàng Nam,CNPM01,sv003@example.com,0900000003,HK1_2026,IT102,Cơ sở dữ liệu,3,8.3,7.8,8.3
+SV003,Lê Hoàng Nam,CNPM01,sv003@example.com,0900000003,HK1_2026,IT103,Cấu trúc dữ liệu và giải thuật,3,7.8,7.3,7.8
+SV003,Lê Hoàng Nam,CNPM01,sv003@example.com,0900000003,HK1_2026,IT104,Lập trình hướng đối tượng,3,9.3,8.8,9.3
+SV003,Lê Hoàng Nam,CNPM01,sv003@example.com,0900000003,HK1_2026,IT105,Phân tích và thiết kế hệ thống,3,8.3,8.3,8.8
+SV003,Lê Hoàng Nam,CNPM01,sv003@example.com,0900000003,HK1_2026,IT106,Kiểm thử phần mềm,3,8.8,7.8,8.3
+SV003,Lê Hoàng Nam,CNPM01,sv003@example.com,0900000003,HK1_2026,IT107,Phát triển ứng dụng web,3,7.3,7.8,8.3
+SV003,Lê Hoàng Nam,CNPM01,sv003@example.com,0900000003,HK1_2026,IT108,Mạng máy tính,3,8.3,7.3,7.8
+SV003,Lê Hoàng Nam,CNPM01,sv003@example.com,0900000003,HK1_2026,IT109,Công nghệ phần mềm,3,8.8,8.3,8.3
+SV003,Lê Hoàng Nam,CNPM01,sv003@example.com,0900000003,HK1_2026,IT110,Đảm bảo chất lượng phần mềm,3,7.8,8.3,8.8
+SV004,Phạm Ngọc Lan,CNPM01,sv004@example.com,0900000004,HK1_2026,IT101,Nhập môn lập trình,3,8.3,7.8,8.3
+SV004,Phạm Ngọc Lan,CNPM01,sv004@example.com,0900000004,HK1_2026,IT102,Cơ sở dữ liệu,3,7.8,7.3,7.8
+SV004,Phạm Ngọc Lan,CNPM01,sv004@example.com,0900000004,HK1_2026,IT103,Cấu trúc dữ liệu và giải thuật,3,7.3,6.8,7.3
+SV004,Phạm Ngọc Lan,CNPM01,sv004@example.com,0900000004,HK1_2026,IT104,Lập trình hướng đối tượng,3,8.8,8.3,8.8
+SV004,Phạm Ngọc Lan,CNPM01,sv004@example.com,0900000004,HK1_2026,IT105,Phân tích và thiết kế hệ thống,3,7.8,7.8,8.3
+SV004,Phạm Ngọc Lan,CNPM01,sv004@example.com,0900000004,HK1_2026,IT106,Kiểm thử phần mềm,3,8.3,7.3,7.8
+SV004,Phạm Ngọc Lan,CNPM01,sv004@example.com,0900000004,HK1_2026,IT107,Phát triển ứng dụng web,3,6.8,7.3,7.8
+SV004,Phạm Ngọc Lan,CNPM01,sv004@example.com,0900000004,HK1_2026,IT108,Mạng máy tính,3,7.8,6.8,7.3
+SV004,Phạm Ngọc Lan,CNPM01,sv004@example.com,0900000004,HK1_2026,IT109,Công nghệ phần mềm,3,8.3,7.8,7.8
+SV004,Phạm Ngọc Lan,CNPM01,sv004@example.com,0900000004,HK1_2026,IT110,Đảm bảo chất lượng phần mềm,3,7.3,7.8,8.3
+SV005,Đỗ Minh Quân,CNPM01,sv005@example.com,0900000005,HK1_2026,IT101,Nhập môn lập trình,3,8.6,8.1,8.6
+SV005,Đỗ Minh Quân,CNPM01,sv005@example.com,0900000005,HK1_2026,IT102,Cơ sở dữ liệu,3,8.1,7.6,8.1
+SV005,Đỗ Minh Quân,CNPM01,sv005@example.com,0900000005,HK1_2026,IT103,Cấu trúc dữ liệu và giải thuật,3,7.6,7.1,7.6
+SV005,Đỗ Minh Quân,CNPM01,sv005@example.com,0900000005,HK1_2026,IT104,Lập trình hướng đối tượng,3,9.1,8.6,9.1
+SV005,Đỗ Minh Quân,CNPM01,sv005@example.com,0900000005,HK1_2026,IT105,Phân tích và thiết kế hệ thống,3,8.1,8.1,8.6
+SV005,Đỗ Minh Quân,CNPM01,sv005@example.com,0900000005,HK1_2026,IT106,Kiểm thử phần mềm,3,8.6,7.6,8.1
+SV005,Đỗ Minh Quân,CNPM01,sv005@example.com,0900000005,HK1_2026,IT107,Phát triển ứng dụng web,3,7.1,7.6,8.1
+SV005,Đỗ Minh Quân,CNPM01,sv005@example.com,0900000005,HK1_2026,IT108,Mạng máy tính,3,8.1,7.1,7.6
+SV005,Đỗ Minh Quân,CNPM01,sv005@example.com,0900000005,HK1_2026,IT109,Công nghệ phần mềm,3,8.6,8.1,8.1
+SV005,Đỗ Minh Quân,CNPM01,sv005@example.com,0900000005,HK1_2026,IT110,Đảm bảo chất lượng phần mềm,3,7.6,8.1,8.6
